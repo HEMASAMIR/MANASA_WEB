@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# منارة — نسخة الويب
 
-## Getting Started
+موقع Next.js للمنصة كاملة (الإدارة/المدرسين/المساعدين، الطالب، ولي الأمر) يعمل على **نفس قاعدة بيانات Supabase** الخاصة بتطبيق الموبايل `attendance_pro` — نفس الحسابات ونفس البيانات ونفس الصلاحيات (Row Level Security).
 
-First, run the development server:
+## التشغيل
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # ثم ضع رابط ومفتاح مشروع Supabase
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`.env.local`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_...   (Project Settings → API)
+NEXT_PUBLIC_APP_NAME=اسم السنتر
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+> المفتاح العام (anon / publishable) آمن في المتصفح لأن كل الصلاحيات محمية داخل قاعدة البيانات. **لا تضع مفتاح service role أبداً.**
 
-## Learn More
+## إعداد Supabase للموقع
 
-To learn more about Next.js, take a look at the following resources:
+نفس خطوات `attendance_pro/supabase/README.md` (schema.sql + دالة manage-user)، بالإضافة إلى:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Authentication → URL Configuration**: ضع رابط الموقع في *Site URL* وأضف
+  `https://your-domain/reset-password` و `https://your-domain/login` إلى *Redirect URLs*
+  (لروابط استعادة كلمة المرور وتأكيد البريد).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## النشر (Vercel)
 
-## Deploy on Vercel
+1. ارفع المشروع على GitHub ثم Import في Vercel.
+2. أضف متغيرات البيئة الثلاثة أعلاه.
+3. Deploy.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## الصفحات
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| البوابة | المسار | المحتوى |
+|---|---|---|
+| عامة | `/` `/login` `/register` `/forgot-password` `/reset-password` | الصفحة الرئيسية وتسجيل الدخول وإنشاء حساب ولي أمر/طالب |
+| الإدارة | `/admin/...` | نظرة عامة، الحضور + QR متغير، الطلاب (إضافة/استيراد Excel/تصدير)، المجموعات والجدول، الامتحانات والدرجات، الكويزات التفاعلية، الكورسات والدروس، المالية، الرسائل، لوحة الشرف، إشعار جماعي، التقارير، المدرسون والمساعدون، مراقبة المحادثات، إعدادات المركز، سجل العمليات |
+| الطالب | `/student/...` | الرئيسية، حضوري + مسح QR بالكاميرا، كورساتي ومشغل الدروس، حل الكويزات، الامتحانات، الدرجات، الجدول، الرسائل، الإشعارات |
+| ولي الأمر | `/parent/...` | متابعة الأبناء (حضور، درجات، اشتراك ومدفوعات)، ربط طالب، الرسائل، الإشعارات |
+
+ما يظهر لكل مستخدم يتحدد بدوره وصلاحياته (نفس منطق `StaffSession` في التطبيق)، وقاعدة البيانات تفرض نفس القواعد.
