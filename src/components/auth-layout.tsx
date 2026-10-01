@@ -53,7 +53,7 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
         </button>
 
         <div className="flex flex-1 items-start justify-center px-4 lg:items-center lg:p-12">
-          <div className="-mt-12 w-full max-w-[440px] rounded-[28px] border border-line bg-surface p-6 shadow-soft sm:p-8 lg:mt-0 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none animate-in">
+          <div className="relative z-10 -mt-12 w-full max-w-[440px] rounded-[28px] border border-line bg-surface p-6 shadow-soft sm:p-8 lg:mt-0 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none animate-in">
             <h2 className="text-2xl font-black">{title}</h2>
             <p className="mt-1 text-sm text-muted">{subtitle}</p>
             <div className="mt-7">{children}</div>
