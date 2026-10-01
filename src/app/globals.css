@@ -54,7 +54,8 @@
 }
 
 html {
-  color-scheme: light;
+  /* only light: stops Chrome / Edge "auto dark mode" from recolouring the site */
+  color-scheme: only light;
   scroll-behavior: smooth;
 }
 html.dark {
@@ -100,7 +101,7 @@ body {
   background: linear-gradient(180deg, #effcfa 0%, #ffffff 50%, #fffaf0 100%);
 }
 .dark .bg-soft-hero {
-  background: linear-gradient(180deg, #0a2233 0%, #07182b 60%, #1a1a10 100%);
+  background: linear-gradient(180deg, #0a2636 0%, #07182b 55%, #0b1f33 100%);
 }
 .grid-lines {
   background-image: linear-gradient(to right, rgba(14, 44, 78, 0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(14, 44, 78, 0.06) 1px, transparent 1px);
@@ -196,3 +197,11 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Language switch: hide the page for a moment while English is applied */
+html.i18n-pending body { visibility: hidden; }
+/* Directional icons point the other way in English */
+[dir="ltr"] .lucide-arrow-left,
+[dir="ltr"] .lucide-arrow-right,
+[dir="ltr"] .lucide-chevron-left,
+[dir="ltr"] .lucide-chevron-right { transform: scaleX(-1); }

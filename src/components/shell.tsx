@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Bell, ChevronDown, LogOut, Menu, Moon, Sun, User, X, type LucideIcon } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/lib/theme";
+import { LangSwitch } from "@/lib/i18n";
 import { sb, APP_NAME } from "@/lib/supabase";
 import { notificationApi } from "@/lib/api";
 import { homeFor, ROLE_LABEL, type Role } from "@/lib/types";
@@ -191,6 +192,7 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
             <div className="min-w-0 flex-1">
               <div className="truncate text-[17px] font-black">{current?.label ?? centerName}</div>
             </div>
+            <LangSwitch className="grid size-10 place-items-center rounded-xl border border-line bg-surface text-sm font-black text-ink/80 transition hover:border-primary/40 hover:text-primary cursor-pointer" />
             <IconButton icon={mode === "dark" ? Sun : Moon} label={mode === "dark" ? "الوضع النهاري" : "الوضع الليلي"} onClick={toggle} />
             <IconButton icon={Bell} label="الإشعارات" badge={unread} onClick={() => router.push(notificationsHref)} />
             <div className="relative" ref={menuRef}>
@@ -231,7 +233,7 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
                 <span className={cx("grid h-8 place-items-center rounded-xl transition-all", on ? "w-12 bg-brand text-white shadow-[0_6px_14px_-6px_rgba(13,148,136,0.9)]" : "w-9 text-muted")}>
                   <Icon className="size-5" />
                 </span>
-                <span className={cx("text-[10.5px] leading-none", on ? "font-extrabold text-primary" : "font-semibold text-muted")}>{n.label.split(" ")[0]}</span>
+                <span className={cx("max-w-[72px] truncate text-[10.5px] leading-none", on ? "font-extrabold text-primary" : "font-semibold text-muted")}>{n.label}</span>
               </Link>
             );
           })}

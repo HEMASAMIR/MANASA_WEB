@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/lib/theme";
+import { LangSwitch } from "@/lib/i18n";
 import { APP_NAME } from "@/lib/supabase";
 import { homeFor } from "@/lib/types";
 import { Fmt, argbToHex, colorFor } from "@/lib/fmt";
@@ -77,6 +78,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2">
+          <LangSwitch />
           <button onClick={toggle} aria-label="تبديل الوضع" className="grid size-10 place-items-center rounded-full border border-slate-200 bg-surface text-navy transition hover:border-teal-300 dark:border-line dark:text-white cursor-pointer">
             {mode === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </button>
@@ -175,7 +177,7 @@ export function CourseCard({ c, currency = "ج.م" }: { c: CatalogCourse; curren
   const mins = totalMinutes(c);
   return (
     <div className="group relative h-full rounded-[2rem] p-[2px] shadow-xl shadow-slate-900/[0.06] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
-      style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${color} 55%, white), white 50%, color-mix(in srgb, ${color} 40%, white))` }}>
+      style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${color} 55%, var(--surface)), var(--surface) 50%, color-mix(in srgb, ${color} 40%, var(--surface)))` }}>
       <div className="shine relative flex h-full flex-col overflow-hidden rounded-[calc(2rem-2px)] bg-surface">
         <div className="relative h-40 overflow-hidden" style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${color} 70%, white), ${color})` }}>
           <div className="dot-pattern absolute inset-0 opacity-25" />

@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { BarChart3, Moon, QrCode, Sun, Users, BookOpenCheck } from "lucide-react";
 import { APP_NAME } from "@/lib/supabase";
 import { useTheme } from "@/lib/theme";
+import { LangSwitch } from "@/lib/i18n";
 
 export function AuthLayout({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
   const { mode, toggle } = useTheme();
@@ -49,6 +50,7 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
           <div className="relative text-sm text-white/85">منصة إدارة التعليم والمتابعة الذكية</div>
         </div>
 
+        <LangSwitch className="absolute top-5 end-[4.25rem] z-10 grid size-10 place-items-center rounded-xl border border-white/25 bg-white/15 text-sm font-black text-white lg:border-line lg:bg-surface lg:text-ink cursor-pointer" />
         <button onClick={toggle} aria-label="تبديل الوضع" className="absolute top-5 end-5 z-10 grid size-10 place-items-center rounded-xl border border-white/25 bg-white/15 text-white lg:border-line lg:bg-surface lg:text-ink cursor-pointer">
           {mode === "dark" ? <Sun className="size-5" /> : <Moon className="size-5" />}
         </button>

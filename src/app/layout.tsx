@@ -2,8 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Cairo } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
-import { ThemeProvider, themeInitScript } from "@/lib/theme";
+import { ThemeProvider } from "@/lib/theme";
+import { langInitScript, themeInitScript } from "@/lib/init-scripts";
 import { UiProvider } from "@/components/ui";
+import { LangProvider } from "@/lib/i18n";
 
 const cairo = Cairo({ variable: "--font-cairo", subsets: ["arabic", "latin"], weight: ["400", "500", "600", "700", "800", "900"] });
 
@@ -16,23 +18,24 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f5fb" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b0d1a" },
-  ],
+  themeColor: "#0e2c4e",
+  colorScheme: "only light",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl" className={`${cairo.variable} h-full`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <meta name="darkreader-lock" />
+        <script dangerouslySetInnerHTML={{ __html: langInitScript + themeInitScript }} />
       </head>
       <body className="min-h-full antialiased">
         <ThemeProvider>
-          <AuthProvider>
-            <UiProvider>{children}</UiProvider>
-          </AuthProvider>
+          <LangProvider>
+            <AuthProvider>
+              <UiProvider>{children}</UiProvider>
+            </AuthProvider>
+          </LangProvider>
         </ThemeProvider>
       </body>
     </html>

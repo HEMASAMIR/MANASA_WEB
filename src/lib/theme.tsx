@@ -5,8 +5,6 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 type Mode = "light" | "dark";
 const Ctx = createContext<{ mode: Mode; toggle(): void; set(m: Mode): void }>({ mode: "light", toggle() {}, set() {} });
 
-/** Inline script that applies the saved theme before first paint (no flash). */
-export const themeInitScript = `(function(){try{var m=localStorage.getItem('theme');if(m==='dark')document.documentElement.classList.add('dark')}catch(e){}})();`;
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<Mode>("light");

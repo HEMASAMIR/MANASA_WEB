@@ -74,7 +74,7 @@ export default function Landing() {
               <div className="mx-auto flex max-w-2xl items-center rounded-2xl border-2 border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/[0.06] transition-colors focus-within:border-teal-400 dark:border-line dark:bg-surface">
                 <Search className="ms-3 size-5 shrink-0 text-teal-600" />
                 <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ابحث عن كورس أو مادة (فيزياء، كيمياء، إنجليزي...)" className="w-full bg-transparent px-3 py-2 text-sm font-semibold text-ink placeholder-slate-400 outline-none" />
-                <button type="submit" className="shine flex shrink-0 items-center gap-1.5 rounded-xl bg-navy px-4 py-3 text-xs font-black text-white transition-colors hover:bg-teal-700 sm:px-6 sm:text-sm cursor-pointer">
+                <button type="submit" className="shine flex shrink-0 items-center gap-1.5 rounded-xl bg-navy dark:bg-teal-600 px-4 py-3 text-xs font-black text-white transition-colors hover:bg-teal-700 sm:px-6 sm:text-sm cursor-pointer">
                   استعرض الكورسات <ArrowLeft className="size-4" />
                 </button>
               </div>
@@ -82,10 +82,10 @@ export default function Landing() {
 
             <div className="flex flex-wrap items-center justify-center gap-2.5 text-xs sm:text-sm">
               {[
-                { icon: PlayCircle, text: `${courses.length || "+"} كورس متاح`, cls: "bg-teal-50 border-teal-200 text-teal-800", ic: "text-teal-600" },
-                { icon: MonitorPlay, text: `${totalLessons || "+"} درس مسجل`, cls: "bg-amber-50 border-amber-200 text-amber-800", ic: "text-amber-600" },
-                { icon: ShieldCheck, text: "بيانات محمية 100%", cls: "bg-sky-50 border-sky-200 text-sky-800", ic: "text-sky-600" },
-                { icon: Zap, text: "إشعارات فورية لولي الأمر", cls: "bg-violet-50 border-violet-200 text-violet-800", ic: "text-violet-600" },
+                { icon: PlayCircle, text: `${courses.length || "+"} كورس متاح`, cls: "bg-teal-50 border-teal-200 text-teal-800 dark:bg-teal-500/10 dark:border-teal-400/25 dark:text-teal-300", ic: "text-teal-600" },
+                { icon: MonitorPlay, text: `${totalLessons || "+"} درس مسجل`, cls: "bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-500/10 dark:border-amber-400/25 dark:text-amber-300", ic: "text-amber-600" },
+                { icon: ShieldCheck, text: "بيانات محمية 100%", cls: "bg-sky-50 border-sky-200 text-sky-800 dark:bg-sky-500/10 dark:border-sky-400/25 dark:text-sky-300", ic: "text-sky-600" },
+                { icon: Zap, text: "إشعارات فورية لولي الأمر", cls: "bg-violet-50 border-violet-200 text-violet-800 dark:bg-violet-500/10 dark:border-violet-400/25 dark:text-violet-300", ic: "text-violet-600" },
               ].map((p) => (
                 <span key={p.text} className={`flex items-center gap-2 rounded-full border px-4 py-2 font-bold transition hover:-translate-y-0.5 hover:shadow-md ${p.cls}`}>
                   <p.icon className={`size-4 ${p.ic}`} /> {p.text}
@@ -102,7 +102,7 @@ export default function Landing() {
               <div className="relative space-y-6">
                 <h3 className="flex items-center gap-3 text-xl font-black sm:text-2xl">
                   <span className="bg-gold grid size-12 shrink-0 place-items-center rounded-2xl text-navy shadow-lg shadow-amber-500/30"><Award className="size-6" /></span>
-                  لماذا <span className="text-amber-300">{APP_NAME}</span>؟
+                  <span>لماذا <span className="text-amber-300">{APP_NAME}</span>؟</span>
                 </h3>
                 <ol className="space-y-3">
                   {[
@@ -170,7 +170,7 @@ export default function Landing() {
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-black text-navy shadow-sm dark:border-line dark:bg-surface-2 dark:text-white">
               <Sparkles className="size-4 text-amber-500" /> المحتوى التعليمي للمركز
             </div>
-            <h2 className="text-3xl font-black text-navy sm:text-5xl dark:text-white">الكورسات والدروس <span className="text-teal-600">({courses.length})</span></h2>
+            <h2 className="text-3xl font-black text-navy sm:text-5xl dark:text-white">الكورسات والدروس <span className="ms-2 inline-grid min-w-12 place-items-center rounded-2xl bg-teal-50 px-3 align-middle text-2xl text-teal-600 sm:text-3xl dark:bg-teal-500/15 dark:text-teal-300">{courses.length}</span></h2>
             <BrandStripe className="mx-auto h-1.5 w-24 overflow-hidden rounded-full" />
             <p className="text-sm text-slate-600 sm:text-base dark:text-muted">دروس مسجلة بجودة عالية لكل مجموعة، ومتابعة تقدم الطالب في كل درس، وكويزات بعد كل جزء.</p>
           </div>
