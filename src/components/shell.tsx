@@ -110,7 +110,7 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
   const sidebar = (
     <div className="flex h-full flex-col">
       {/* Brand card */}
-      <div className="relative m-3 overflow-hidden rounded-[22px] bg-hero p-4 text-white shadow-[0_14px_30px_-14px_rgba(91,76,245,0.9)]">
+      <div className="relative m-3 overflow-hidden rounded-[22px] bg-hero p-4 text-white shadow-[0_14px_30px_-14px_rgba(13,148,136,0.9)]">
         <div className="absolute -top-10 -start-10 size-32 rounded-full bg-white/10" />
         <div className="relative flex items-center gap-3">
           <div className="grid size-11 place-items-center overflow-hidden rounded-2xl border border-white/25 bg-white/15">
@@ -142,7 +142,7 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
               href={n.href}
               className={cx(
                 "group flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-[14px] transition-all",
-                on ? "bg-brand font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(91,76,245,0.9)]" : "font-semibold text-ink/80 hover:bg-surface-3 hover:text-ink",
+                on ? "bg-brand font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(13,148,136,0.9)]" : "font-semibold text-ink/80 hover:bg-surface-3 hover:text-ink",
               )}
             >
               <Icon className={cx("size-[19px] shrink-0", on ? "text-white" : "text-muted group-hover:text-primary")} />
@@ -185,6 +185,7 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
       <div className="lg:ps-[280px]">
         {/* Top bar */}
         <header className="sticky top-0 z-20 glass border-b border-line no-print">
+          <div className="brand-stripe h-1"><span /><span /><span /></div>
           <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-3 px-4 md:px-8">
             <IconButton icon={Menu} label="القائمة" className="lg:hidden" onClick={() => setOpen(true)} />
             <div className="min-w-0 flex-1">
@@ -227,7 +228,7 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
             const Icon = n.icon;
             return (
               <Link key={n.href} href={n.href} className="flex flex-1 flex-col items-center gap-1">
-                <span className={cx("grid h-8 place-items-center rounded-xl transition-all", on ? "w-12 bg-brand text-white shadow-[0_6px_14px_-6px_rgba(91,76,245,0.9)]" : "w-9 text-muted")}>
+                <span className={cx("grid h-8 place-items-center rounded-xl transition-all", on ? "w-12 bg-brand text-white shadow-[0_6px_14px_-6px_rgba(13,148,136,0.9)]" : "w-9 text-muted")}>
                   <Icon className="size-5" />
                 </span>
                 <span className={cx("text-[10.5px] leading-none", on ? "font-extrabold text-primary" : "font-semibold text-muted")}>{n.label.split(" ")[0]}</span>

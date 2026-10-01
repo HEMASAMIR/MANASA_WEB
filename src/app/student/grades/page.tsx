@@ -57,7 +57,7 @@ export default function StudentGrades() {
                   <PolarGrid stroke="var(--border)" />
                   <PolarAngleAxis dataKey="s" tick={{ fill: "var(--muted)", fontSize: 12 }} />
                   <Tooltip contentStyle={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 14 }} />
-                  <Radar dataKey="v" name="%" stroke="#6D5DFC" fill="#6D5DFC" fillOpacity={0.35} strokeWidth={2} />
+                  <Radar dataKey="v" name="%" stroke="#0D9488" fill="#0D9488" fillOpacity={0.35} strokeWidth={2} />
                 </RadarChart>
               </ResponsiveContainer>
             </Card>

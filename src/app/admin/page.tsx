@@ -35,7 +35,7 @@ export default function Overview() {
       {({ stats: s, today, atRisk }) => (
         <>
           {/* Welcome banner */}
-          <div className="relative mb-6 overflow-hidden rounded-[28px] bg-hero p-6 text-white shadow-[0_20px_40px_-18px_rgba(91,76,245,0.8)] animate-in md:p-8">
+          <div className="relative mb-6 overflow-hidden rounded-[28px] bg-hero p-6 text-white shadow-[0_20px_40px_-18px_rgba(13,148,136,0.8)] animate-in md:p-8">
             <div className="absolute -top-16 -end-10 size-56 rounded-full bg-white/10" />
             <div className="absolute -bottom-20 end-40 size-40 rounded-full bg-white/[0.06]" />
             <div className="relative flex flex-wrap items-end justify-between gap-5">

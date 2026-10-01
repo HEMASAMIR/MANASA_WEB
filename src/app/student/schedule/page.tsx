@@ -25,7 +25,7 @@ export default function StudentSchedule() {
           const has = data.events.some((e) => e.date.toDateString() === d.toDateString());
           const on = i === sel;
           return (
-            <button key={i} onClick={() => setSel(i)} className={cx("flex w-[68px] shrink-0 flex-col items-center rounded-3xl border py-3 transition cursor-pointer", on ? "border-transparent bg-brand text-white shadow-[0_10px_22px_-10px_rgba(91,76,245,0.9)]" : "border-line bg-surface hover:border-primary/40")}>
+            <button key={i} onClick={() => setSel(i)} className={cx("flex w-[68px] shrink-0 flex-col items-center rounded-3xl border py-3 transition cursor-pointer", on ? "border-transparent bg-brand text-white shadow-[0_10px_22px_-10px_rgba(13,148,136,0.9)]" : "border-line bg-surface hover:border-primary/40")}>
               <span className={cx("text-[11px] font-bold", on ? "text-white/80" : "text-muted")}>{i === 0 ? "اليوم" : Fmt.weekday(d).slice(0, 3)}</span>
               <span className="text-2xl font-black">{d.getDate()}</span>
               <span className={cx("mt-1 size-1.5 rounded-full", has ? (on ? "bg-white" : "bg-primary") : "bg-transparent")} />

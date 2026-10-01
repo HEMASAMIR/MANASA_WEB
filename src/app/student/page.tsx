@@ -19,7 +19,7 @@ export default function StudentHome() {
   const greeting = hour < 12 ? "صباح الخير" : hour < 18 ? "مساء النور" : "مساء الخير";
 
   const stats = [
-    { icon: BookOpen, label: "الكورسات", value: data.courses.length, from: "#6D5DFC", to: "#4338CA" },
+    { icon: BookOpen, label: "الكورسات", value: data.courses.length, from: "#0D9488", to: "#0F766E" },
     { icon: CheckCircle2, label: "الدروس المنتهية", value: data.completedLessons, from: "#10B981", to: "#059669" },
     { icon: FileText, label: "الامتحانات", value: data.exams.length, from: "#F59E0B", to: "#EA580C" },
     { icon: Star, label: "متوسط الدرجات", value: `${Math.round(avg)}%`, from: "#EC4899", to: "#BE185D" },
@@ -28,7 +28,7 @@ export default function StudentHome() {
   return (
     <>
       {/* Welcome */}
-      <div className="relative overflow-hidden rounded-[30px] bg-welcome p-6 text-white shadow-[0_24px_50px_-20px_rgba(91,76,245,0.8)] animate-in md:p-8">
+      <div className="relative overflow-hidden rounded-[30px] bg-welcome p-6 text-white shadow-[0_24px_50px_-20px_rgba(13,148,136,0.8)] animate-in md:p-8">
         <div className="absolute -top-16 -end-12 size-60 rounded-full bg-white/10" />
         <div className="absolute -bottom-20 end-40 size-40 rounded-full bg-white/[0.07]" />
         <div className="relative flex flex-wrap items-center gap-6">

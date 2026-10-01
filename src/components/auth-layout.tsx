@@ -12,6 +12,7 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
     <div className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
       {/* Brand panel */}
       <div className="relative hidden overflow-hidden bg-hero text-white lg:flex lg:flex-col lg:items-center lg:justify-center lg:p-12">
+        <div className="brand-stripe absolute inset-x-0 top-0 h-1.5"><span /><span /><span /></div>
         <div className="absolute -top-24 -start-20 size-80 rounded-full bg-white/10" />
         <div className="absolute -bottom-32 -end-16 size-96 rounded-full bg-white/[0.07]" />
         <div className="absolute top-32 end-16 size-16 rounded-full bg-white/10" />

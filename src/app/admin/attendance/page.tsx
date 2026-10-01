@@ -39,7 +39,7 @@ function AttendanceInner() {
         icon={ClipboardCheck}
         subtitle="سجّل الحضور يدوياً أو اعرض رمز QR ليمسحه الطلاب"
         actions={classId && (
-          <Link href={`/admin/attendance/qr/${classId}`} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-brand px-5 font-bold text-white shadow-[0_8px_20px_-8px_rgba(91,76,245,0.8)]">
+          <Link href={`/admin/attendance/qr/${classId}`} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-brand px-5 font-bold text-white shadow-[0_8px_20px_-8px_rgba(13,148,136,0.8)]">
             <QrCode className="size-5" /> حضور بالـ QR
           </Link>
         )}

@@ -98,7 +98,7 @@ export function whatsappLink(phone: string | null | undefined, text: string, cou
   return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
 }
 
-export const PALETTE = ["#6D5DFC", "#0EA5E9", "#10B981", "#F59E0B", "#EC4899", "#8B5CF6", "#14B8A6", "#EF4461"];
+export const PALETTE = ["#0D9488", "#0EA5E9", "#10B981", "#F59E0B", "#EC4899", "#8B5CF6", "#14B8A6", "#EF4461"];
 
 export function colorFor(key: string): string {
   let h = 0;
@@ -107,7 +107,7 @@ export function colorFor(key: string): string {
 }
 
 /** Flutter stores colors as signed/unsigned ARGB ints. */
-export function argbToHex(v: number | null | undefined, fallback = "#6D5DFC"): string {
+export function argbToHex(v: number | null | undefined, fallback = "#0D9488"): string {
   if (v === null || v === undefined) return fallback;
   const n = Number(v) >>> 0;
   return `#${(n & 0xffffff).toString(16).padStart(6, "0")}`;

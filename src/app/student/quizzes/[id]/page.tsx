@@ -158,7 +158,7 @@ export default function TakeQuiz() {
             const on = answers[q.id] === j;
             return (
               <button key={j} onClick={() => setAnswers({ ...answers, [q.id]: j })}
-                className={cx("flex items-center gap-4 rounded-2xl border-2 p-4 text-start text-[16px] font-bold transition cursor-pointer", on ? "border-primary bg-primary-soft text-primary shadow-[0_8px_20px_-12px_rgba(91,76,245,0.9)]" : "border-line hover:border-primary/40")}>
+                className={cx("flex items-center gap-4 rounded-2xl border-2 p-4 text-start text-[16px] font-bold transition cursor-pointer", on ? "border-primary bg-primary-soft text-primary shadow-[0_8px_20px_-12px_rgba(13,148,136,0.9)]" : "border-line hover:border-primary/40")}>
                 <span className={cx("grid size-9 shrink-0 place-items-center rounded-xl text-sm font-black", on ? "bg-brand text-white" : "bg-surface-3 text-muted")}>{q.kind === "tf" ? (j === 0 ? "✓" : "✗") : "أبجد"[j] ?? j + 1}</span>
                 {o}
               </button>

@@ -14,7 +14,7 @@ export function cx(...c: (string | false | null | undefined)[]) {
 }
 
 export const TONE_HEX: Record<Tone, string> = {
-  primary: "#6D5DFC",
+  primary: "#0D9488",
   success: "#10B981",
   danger: "#EF4461",
   warning: "#F59E0B",
@@ -35,7 +35,7 @@ export const Button = forwardRef<HTMLButtonElement, BtnProps>(function Button(
   { variant = "primary", size = "md", loading, icon: Icon, className, children, disabled, ...rest }, ref,
 ) {
   const v: Record<BtnVariant, string> = {
-    primary: "bg-brand text-white shadow-[0_8px_20px_-8px_rgba(91,76,245,0.7)] hover:shadow-[0_12px_26px_-8px_rgba(91,76,245,0.8)] hover:-translate-y-px",
+    primary: "bg-brand text-white shadow-[0_8px_20px_-8px_rgba(13,148,136,0.7)] hover:shadow-[0_12px_26px_-8px_rgba(13,148,136,0.8)] hover:-translate-y-px",
     secondary: "bg-primary-soft text-primary hover:bg-primary/20",
     ghost: "text-ink/80 hover:bg-surface-3",
     outline: "border border-line bg-surface text-ink hover:border-primary/50 hover:text-primary",
@@ -251,7 +251,7 @@ export function Tabs<T extends string>({ value, onChange, items }: { value: T; o
             onClick={() => onChange(it.value)}
             className={cx(
               "flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition cursor-pointer",
-              on ? "bg-brand text-white shadow-[0_6px_14px_-6px_rgba(91,76,245,0.8)]" : "text-muted hover:text-ink hover:bg-surface-3",
+              on ? "bg-brand text-white shadow-[0_6px_14px_-6px_rgba(13,148,136,0.8)]" : "text-muted hover:text-ink hover:bg-surface-3",
             )}
           >
             {Icon && <Icon className="size-4" />}
@@ -430,7 +430,7 @@ export function UiProvider({ children }: { children: ReactNode }) {
         {toasts.map((t) => {
           const I = icons[t.kind];
           return (
-            <div key={t.id} className="pointer-events-auto flex max-w-md items-center gap-3 rounded-2xl bg-[#1e1b4b] px-4 py-3 text-sm font-semibold text-white shadow-2xl animate-in dark:bg-[#2a2e48]">
+            <div key={t.id} className="pointer-events-auto flex max-w-md items-center gap-3 rounded-2xl bg-[#0E2C4E] px-4 py-3 text-sm font-semibold text-white shadow-2xl animate-in dark:bg-[#2a2e48]">
               <I className="size-5 shrink-0" style={{ color: colors[t.kind] }} />
               <span>{t.text}</span>
             </div>

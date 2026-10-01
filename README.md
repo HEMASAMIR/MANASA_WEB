@@ -24,19 +24,24 @@
 
 <table>
   <tr>
-    <td width="70%"><img src="docs/screenshots/login.png" alt="تسجيل الدخول" /></td>
-    <td width="30%"><img src="docs/screenshots/login-mobile.png" alt="تسجيل الدخول على الموبايل" /></td>
+    <td width="70%"><img src="docs/screenshots/course.png" alt="صفحة الكورس ودروسه" /></td>
+    <td width="30%"><img src="docs/screenshots/home-mobile.png" alt="الصفحة الرئيسية على الموبايل" /></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/register.png" alt="إنشاء حساب" /></td>
-    <td><img src="docs/screenshots/register-mobile.png" alt="إنشاء حساب على الموبايل" /></td>
+    <td><img src="docs/screenshots/login.png" alt="تسجيل الدخول" /></td>
+    <td><img src="docs/screenshots/login-mobile.png" alt="تسجيل الدخول على الموبايل" /></td>
   </tr>
 </table>
+
+> **وضع العرض التوضيحي:** لو قاعدة البيانات غير متصلة، الموقع يعرض كورسات ودروس نموذجية مع شريط أصفر واضح
+> «عرض توضيحي» — وبمجرد ربط مشروع Supabase تظهر الكورسات الحقيقية تلقائياً.
 
 ## المميزات
 
 | | |
 |---|---|
+| 🎨 **هوية بصرية موحدة** | نفس ألوان أكاديمية هير خالد: تيل، ذهبي، كحلي، مع شريط الهوية الثلاثي |
+| 📚 **كورسات ودروس للزوار** | صفحة `/courses` وصفحة لكل كورس بقائمة دروسه — بدون روابط الفيديو، والمشاهدة للطلاب المسجلين فقط |
 | 🔐 **نفس الحسابات والبيانات** | يعمل على مشروع Supabase الخاص بتطبيق الموبايل `attendance_pro` — أي تعديل من الموقع يظهر في التطبيق فوراً والعكس |
 | 🛡️ **أمان من قاعدة البيانات** | كل صلاحية محمية بـ Row Level Security؛ ولي الأمر لا يرى إلا أبناءه والمساعد لا يرى إلا ما سمح به المدرس |
 | 📱 **متجاوب بالكامل** | قائمة جانبية على الكمبيوتر، وشريط سفلي عائم على الموبايل |
@@ -100,7 +105,8 @@ NEXT_PUBLIC_APP_NAME=اسم السنتر
 2. انشر دالة `manage-user` (مطلوبة لإنشاء حسابات المدرسين والمساعدين):
    `supabase functions deploy manage-user`
 3. أنشئ أول مدير: سجّل حساباً ثم نفّذ `select public.bootstrap_admin('you@example.com');`
-4. **Authentication → URL Configuration**: ضع رابط الموقع في *Site URL*، وأضف إلى *Redirect URLs*:
+4. نفّذ `supabase/public_catalog.sql` (من هذا المستودع) لعرض الكورسات والدروس للزوار في الصفحة الرئيسية و`/courses`.
+5. **Authentication → URL Configuration**: ضع رابط الموقع في *Site URL*، وأضف إلى *Redirect URLs*:
    - `https://your-domain.com/login`
    - `https://your-domain.com/reset-password`
 
@@ -108,7 +114,7 @@ NEXT_PUBLIC_APP_NAME=اسم السنتر
 
 1. من [vercel.com/new](https://vercel.com/new) اختر هذا المستودع.
 2. أضف متغيرات البيئة الثلاثة.
-3. **Deploy** — ثم أضف رابط الموقع في إعدادات Supabase (الخطوة 4 أعلاه).
+3. **Deploy** — ثم أضف رابط الموقع في إعدادات Supabase (الخطوة 5 أعلاه).
 
 ## هيكل المشروع
 
@@ -116,6 +122,7 @@ NEXT_PUBLIC_APP_NAME=اسم السنتر
 src/
 ├── app/
 │   ├── page.tsx              الصفحة الرئيسية
+│   ├── courses/              الكورسات وصفحة كل كورس (عامة للزوار)
 │   ├── login/ register/ forgot-password/ reset-password/
 │   ├── admin/                لوحة الإدارة (20 صفحة)
 │   ├── student/              بوابة الطالب

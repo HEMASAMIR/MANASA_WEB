@@ -74,12 +74,12 @@ export default function FinancePage() {
                   <Card className="h-72" padded>
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={chart} margin={{ left: 8, right: 8, top: 8 }}>
-                        <defs><linearGradient id="rev" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#6D5DFC" stopOpacity={0.4} /><stop offset="100%" stopColor="#6D5DFC" stopOpacity={0} /></linearGradient></defs>
+                        <defs><linearGradient id="rev" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0D9488" stopOpacity={0.4} /><stop offset="100%" stopColor="#0D9488" stopOpacity={0} /></linearGradient></defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                         <XAxis dataKey="d" tick={{ fill: "var(--muted)", fontSize: 12 }} axisLine={false} tickLine={false} reversed />
                         <YAxis tick={{ fill: "var(--muted)", fontSize: 12 }} axisLine={false} tickLine={false} orientation="right" width={60} />
                         <Tooltip contentStyle={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 14 }} formatter={(v) => [Fmt.money(Number(v), currency), "الإيراد"]} />
-                        <Area type="monotone" dataKey="v" stroke="#6D5DFC" strokeWidth={3} fill="url(#rev)" />
+                        <Area type="monotone" dataKey="v" stroke="#0D9488" strokeWidth={3} fill="url(#rev)" />
                       </AreaChart>
                     </ResponsiveContainer>
                   </Card>

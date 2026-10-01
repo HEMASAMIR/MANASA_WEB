@@ -111,8 +111,8 @@ export default function QrKiosk() {
             </div>
           ) : (
             <div ref={boxRef} className="flex w-full flex-col items-center bg-surface p-4">
-              <div className="rounded-[32px] bg-white p-6 shadow-[0_20px_50px_-20px_rgba(91,76,245,0.6)] ring-8 ring-primary/10">
-                {token ? <QRCodeSVG value={token} size={320} level="M" marginSize={1} fgColor="#1e1b4b" /> : <div className="grid size-80 place-items-center"><Spinner /></div>}
+              <div className="rounded-[32px] bg-white p-6 shadow-[0_20px_50px_-20px_rgba(13,148,136,0.6)] ring-8 ring-primary/10">
+                {token ? <QRCodeSVG value={token} size={320} level="M" marginSize={1} fgColor="#0E2C4E" /> : <div className="grid size-80 place-items-center"><Spinner /></div>}
               </div>
               <div className="mt-6 flex items-center gap-3">
                 <span className="relative flex size-3"><span className="absolute inline-flex size-full animate-ping rounded-full bg-success opacity-75" /><span className="relative inline-flex size-3 rounded-full bg-success" /></span>
