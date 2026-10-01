@@ -14,6 +14,7 @@ import { APP_NAME } from "@/lib/supabase";
 import { homeFor } from "@/lib/types";
 import { Fmt, argbToHex, colorFor } from "@/lib/fmt";
 import type { CatalogCourse } from "@/lib/catalog";
+import { LogoMark } from "@/components/logo";
 import { cx } from "./ui";
 
 const NAV = [
@@ -48,8 +49,7 @@ export function SiteHeader() {
       <BrandStripe />
       <div className={cx("mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 transition-all duration-300 sm:px-6 lg:px-8", scrolled ? "h-16" : "h-20")}>
         <Link href="/" className="group flex shrink-0 items-center gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="" className={cx("rounded-2xl object-cover shadow-md transition-all duration-300 group-hover:scale-105", scrolled ? "size-10" : "size-12")} />
+          <LogoMark size={scrolled ? 42 : 50} className="shrink-0 drop-shadow-[0_8px_16px_rgba(14,44,78,0.25)] transition-all duration-300 group-hover:scale-105 group-hover:-rotate-3" />
           <div className="hidden flex-col sm:flex">
             <span className="text-2xl font-black leading-tight text-navy dark:text-white">{APP_NAME}</span>
             <span className="flex items-center gap-1.5 text-[11px] font-bold text-muted">
@@ -126,8 +126,7 @@ export function SiteFooter({ phone }: { phone?: string | null }) {
       <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-3" data-reveal-stagger="140">
         <div>
           <div className="flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="" className="size-12 rounded-2xl object-cover" />
+            <LogoMark size={52} />
             <span className="text-2xl font-black">{APP_NAME}</span>
           </div>
           <p className="mt-4 leading-7 text-slate-300">منصة متكاملة لإدارة السناتر والمدارس: حضور ذكي، كورسات ودروس، كويزات تفاعلية، ومتابعة لحظية لأولياء الأمور.</p>
@@ -157,9 +156,9 @@ export function SiteFooter({ phone }: { phone?: string | null }) {
 
 export function DemoBanner() {
   return (
-    <div className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-center text-xs font-bold text-amber-800 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-300">
-      <Info className="me-1 inline size-4" />
-      عرض توضيحي: قاعدة البيانات غير متصلة حالياً، والكورسات المعروضة أمثلة للتوضيح فقط.
+    <div className="relative z-50 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-b border-amber-200 bg-gradient-to-l from-amber-50 via-amber-100/70 to-amber-50 px-4 py-2 text-center text-xs font-bold text-amber-900 dark:border-amber-900 dark:from-amber-950/40 dark:via-amber-900/30 dark:to-amber-950/40 dark:text-amber-200">
+      <span className="flex items-center gap-1.5"><Info className="size-4" /> نسخة تجريبية ببيانات توضيحية</span>
+      <Link href="/login" className="rounded-full bg-navy px-3 py-1 text-[11px] font-black text-white shadow hover:bg-teal-700">جرّب لوحة الأدمن الآن ←</Link>
     </div>
   );
 }

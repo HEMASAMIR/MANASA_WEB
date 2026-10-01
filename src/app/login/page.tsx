@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowLeft, AtSign, Eye, EyeOff, Lock, UserPlus } from "lucide-react";
 import { AuthLayout } from "@/components/auth-layout";
+import { DemoLogin } from "@/components/demo-login";
 import { Button, Field, Input } from "@/components/ui";
 import { useAuth } from "@/lib/auth";
 import { friendlyError } from "@/lib/errors";
-import { isConfigured } from "@/lib/supabase";
 import { homeFor } from "@/lib/types";
 
 export default function LoginPage() {
@@ -21,7 +21,10 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!loading && profile) router.replace(homeFor(profile.role));
+    if (!loading && profile) {
+      const next = new URLSearchParams(window.location.search).get("next");
+      router.replace(next && next.startsWith("/") ? next : homeFor(profile.role));
+    }
   }, [loading, profile, router]);
 
   const submit = async (e: React.FormEvent) => {
@@ -42,11 +45,6 @@ export default function LoginPage() {
 
   return (
     <AuthLayout title="مرحباً بعودتك 👋" subtitle="سجّل الدخول لمتابعة حسابك">
-      {!isConfigured && (
-        <div className="mb-5 rounded-2xl border border-warning/40 bg-warning/10 p-3 text-sm font-semibold text-warning">
-          لم يتم ضبط الاتصال بقاعدة البيانات. أضف مفاتيح Supabase في ملف ‎.env.local
-        </div>
-      )}
       <form onSubmit={submit} className="space-y-4">
         <Field label="البريد الإلكتروني">
           <Input icon={AtSign} type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" dir="ltr" className="text-start" />
@@ -73,6 +71,7 @@ export default function LoginPage() {
       <Link href="/register" className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-line bg-surface font-bold text-primary transition hover:border-primary/50">
         <UserPlus className="size-5" /> إنشاء حساب ولي أمر / طالب
       </Link>
+      <DemoLogin />
     </AuthLayout>
   );
 }

@@ -7,10 +7,12 @@ import { Bell, ChevronDown, LogOut, Menu, Moon, Sun, User, X, type LucideIcon } 
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/lib/theme";
 import { LangSwitch } from "@/lib/i18n";
-import { sb, APP_NAME } from "@/lib/supabase";
+import { sb, APP_NAME, isDemo } from "@/lib/supabase";
+import { resetDemo } from "@/lib/demo/client";
 import { notificationApi } from "@/lib/api";
 import { homeFor, ROLE_LABEL, type Role } from "@/lib/types";
-import { Avatar, IconButton, Spinner, cx, useUi } from "./ui";
+import { LogoMark } from "@/components/logo";
+import { Avatar, IconButton, Spinner, cx, initialOf, useUi } from "./ui";
 
 export interface NavItem {
   href: string;
@@ -38,8 +40,7 @@ export function RoleGuard({ roles, children }: { roles: Role[]; children: ReactN
       <div className="grid min-h-screen place-items-center portal-bg">
         <div className="flex flex-col items-center gap-4">
           <div className="grid size-16 place-items-center rounded-3xl bg-brand shadow-lg animate-float">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="" className="size-12 rounded-2xl object-cover" />
+            <LogoMark size={56} />
           </div>
           <Spinner className="size-6" />
         </div>
@@ -115,8 +116,10 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
         <div className="absolute -top-10 -start-10 size-32 rounded-full bg-white/10" />
         <div className="relative flex items-center gap-3">
           <div className="grid size-11 place-items-center overflow-hidden rounded-2xl border border-white/25 bg-white/15">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={settings?.logo_url || "/logo.png"} alt="" className="size-9 rounded-xl object-cover" />
+            {settings?.logo_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={settings.logo_url} alt="" className="size-9 rounded-xl object-cover" />
+            ) : <LogoMark size={36} />}
           </div>
           <div className="min-w-0">
             <div className="truncate text-[15px] font-black">{centerName}</div>
@@ -124,7 +127,7 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
           </div>
         </div>
         <div className="relative mt-4 flex items-center gap-2.5 rounded-2xl bg-white/12 p-2.5">
-          <div className="grid size-9 place-items-center rounded-full bg-white font-black text-primary-2">{profile?.name?.charAt(0) || "?"}</div>
+          <div className="grid size-9 place-items-center rounded-full bg-white font-black text-primary-2">{initialOf(profile?.name ?? "")}</div>
           <div className="min-w-0">
             <div className="truncate text-[13px] font-bold">{profile?.name}</div>
             <div className="text-[11px] text-white/75">{profile ? ROLE_LABEL[profile.role] : ""}</div>
@@ -185,6 +188,22 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
 
       <div className="lg:ps-[280px]">
         {/* Top bar */}
+        {isDemo() && (
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-b border-amber-200 bg-amber-50 px-4 py-1.5 text-center text-[11.5px] font-bold text-amber-900 no-print dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
+            <span>✨ نسخة تجريبية: جرّب الإضافة والتعديل والحذف بحرية — التغييرات محفوظة في متصفحك فقط</span>
+            <button
+              onClick={async () => {
+                if (await confirm({ title: "إعادة ضبط البيانات التجريبية", message: "سترجع كل البيانات التجريبية لحالتها الأصلية.", confirmLabel: "إعادة الضبط" })) {
+                  resetDemo();
+                  window.location.reload();
+                }
+              }}
+              className="rounded-full border border-amber-300 bg-white px-2.5 py-0.5 text-[11px] font-black text-amber-800 hover:bg-amber-100 cursor-pointer dark:bg-transparent"
+            >
+              إعادة ضبط البيانات
+            </button>
+          </div>
+        )}
         <header className="sticky top-0 z-20 glass border-b border-line no-print">
           <div className="brand-stripe h-1"><span /><span /><span /></div>
           <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-3 px-4 md:px-8">

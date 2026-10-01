@@ -15,7 +15,7 @@ const appName = process.env.NEXT_PUBLIC_APP_NAME || "منارة";
 export const metadata: Metadata = {
   title: { default: `${appName} | منصة إدارة التعليم والمتابعة الذكية`, template: `%s | ${appName}` },
   description: "منصة متكاملة لإدارة السناتر والمدارس: حضور بالـ QR، درجات، كويزات تفاعلية، كورسات، مالية، ومتابعة أولياء الأمور.",
-  icons: { icon: "/logo.png" },
+  icons: { icon: "/logo.svg" },
 };
 
 export const viewport: Viewport = {

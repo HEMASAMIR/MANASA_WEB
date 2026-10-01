@@ -143,9 +143,15 @@ export function Badge({ children, tone = "primary", dot = true }: { children: Re
   );
 }
 
+/** First letter of a name, skipping titles such as "أ." / "د." / "Mr." */
+export function initialOf(name: string): string {
+  return (name || "").trim().replace(/^(أ\.|د\.|م\.|Mr\.|Ms\.|Mrs\.|Dr\.)\s*/i, "").charAt(0) || "?";
+}
+
 export function Avatar({ name, size = 44, src }: { name: string; size?: number; src?: string | null }) {
   const n = (name || "?").trim();
   const c = colorFor(n);
+  const initial = initialOf(n);
   if (src) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt={n} className="rounded-full object-cover shrink-0" style={{ width: size, height: size }} />;
@@ -155,7 +161,7 @@ export function Avatar({ name, size = 44, src }: { name: string; size?: number; 
       className="grid shrink-0 place-items-center rounded-full font-black text-white"
       style={{ width: size, height: size, fontSize: size * 0.4, background: `linear-gradient(135deg, color-mix(in srgb, ${c} 78%, white), ${c})`, boxShadow: `0 6px 14px -6px ${c}` }}
     >
-      {n.charAt(0) || "?"}
+      {initial}
     </div>
   );
 }

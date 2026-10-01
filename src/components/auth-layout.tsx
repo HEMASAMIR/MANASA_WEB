@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { BarChart3, Moon, QrCode, Sun, Users, BookOpenCheck } from "lucide-react";
 import { APP_NAME } from "@/lib/supabase";
 import { useTheme } from "@/lib/theme";
+import { LogoMark } from "@/components/logo";
 import { LangSwitch } from "@/lib/i18n";
 
 export function AuthLayout({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
@@ -18,8 +19,7 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
         <div className="absolute -bottom-32 -end-16 size-96 rounded-full bg-white/[0.07]" />
         <div className="absolute top-32 end-16 size-16 rounded-full bg-white/10" />
         <Link href="/" className="relative rounded-[34px] border border-white/30 bg-white/15 p-2 shadow-2xl animate-float">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="" className="size-28 rounded-[28px] object-cover" />
+          <LogoMark size={112} className="rounded-[28px]" />
         </Link>
         <h1 className="relative mt-7 text-5xl font-black">{APP_NAME}</h1>
         <p className="relative mt-3 text-lg text-white/85">منصة إدارة التعليم والمتابعة الذكية</p>
@@ -43,8 +43,7 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
         <div className="relative overflow-hidden rounded-b-[36px] bg-hero px-6 pb-20 pt-6 text-center text-white lg:hidden">
           <div className="absolute -top-16 -start-16 size-56 rounded-full bg-white/10" />
           <Link href="/" className="relative mx-auto mt-4 block w-fit rounded-3xl border border-white/30 bg-white/15 p-1.5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="" className="size-20 rounded-[20px] object-cover" />
+            <LogoMark size={80} />
           </Link>
           <div className="relative mt-3 text-3xl font-black">{APP_NAME}</div>
           <div className="relative text-sm text-white/85">منصة إدارة التعليم والمتابعة الذكية</div>

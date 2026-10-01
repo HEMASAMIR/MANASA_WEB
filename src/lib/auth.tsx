@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { User } from "@supabase/supabase-js";
-import { sb } from "./supabase";
+import { initBackend, sb } from "./supabase";
 import { AppError } from "./errors";
 import { peopleApi, settingsApi } from "./api";
 import type { AppSettings, Assistant, Profile, Role } from "./types";
@@ -98,7 +98,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let alive = true;
-    sb().auth.getSession().then(async ({ data }) => {
+    let unsub: (() => void) | null = null;
+    initBackend().then(async () => {
+      const { data } = await sb().auth.getSession();
       try {
         await hydrate(data.session?.user ?? null);
       } catch {
@@ -107,17 +109,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } finally {
         if (alive) setLoading(false);
       }
-    });
-    const { data: sub } = sb().auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") {
-        setUser(null);
-        setProfile(null);
-        setAssistant(null);
-      }
+      const { data: sub } = sb().auth.onAuthStateChange((event) => {
+        if (event === "SIGNED_OUT") {
+          setUser(null);
+          setProfile(null);
+          setAssistant(null);
+        }
+      });
+      unsub = () => sub.subscription.unsubscribe();
     });
     return () => {
       alive = false;
-      sub.subscription.unsubscribe();
+      unsub?.();
     };
   }, [hydrate]);
 
