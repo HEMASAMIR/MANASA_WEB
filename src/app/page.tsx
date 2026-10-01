@@ -47,21 +47,21 @@ export default function Landing() {
 
       {/* ─── Hero ─── */}
       <section className="bg-soft-hero relative overflow-hidden border-b border-slate-200/70 pt-12 pb-20 lg:pt-16 lg:pb-28 dark:border-line">
-        <div className="pointer-events-none absolute -top-32 right-[10%] size-[520px] rounded-full bg-teal-300/25 blur-[120px]" />
-        <div className="pointer-events-none absolute top-40 left-[5%] size-[420px] rounded-full bg-amber-300/20 blur-[120px]" />
+        <div data-parallax="0.25" className="pointer-events-none absolute -top-32 right-[10%]"><div className="blob-drift size-[520px] rounded-full bg-teal-300/25 blur-[120px]" /></div>
+        <div data-parallax="0.12" className="pointer-events-none absolute top-40 left-[5%]"><div className="blob-drift size-[420px] rounded-full bg-amber-300/20 blur-[120px]" style={{ animationDelay: "-5s" }} /></div>
         <div className="grid-lines pointer-events-none absolute inset-0 opacity-40" />
 
         <div className="relative mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl space-y-7 text-center animate-in">
+          <div className="mx-auto max-w-4xl space-y-7 text-center" data-reveal-stagger="130">
             <div className="inline-flex items-center gap-2 rounded-full border border-teal-200 bg-white/90 px-5 py-2 text-xs font-black text-teal-800 shadow-md shadow-teal-900/5 backdrop-blur sm:text-sm dark:border-teal-900 dark:bg-surface dark:text-teal-300">
               <Sparkles className="size-4 animate-pulse text-amber-500" /> منصة إدارة التعليم والمتابعة الذكية للسناتر والمدارس
             </div>
-            <h1 className="text-[2rem] font-black leading-[1.3] tracking-tight text-navy sm:text-5xl lg:text-6xl dark:text-white">
+            <h1 data-reveal="blur" className="text-[2rem] font-black leading-[1.3] tracking-tight text-navy sm:text-5xl lg:text-6xl dark:text-white">
               <span className="block">
                 كل مركزك التعليمي في{" "}
-                <span className="relative inline-block text-teal-600 dark:text-teal-400">
+                <span className="shimmer-text relative inline-block">
                   {APP_NAME}
-                  <BrandStripe className="absolute inset-x-0 -bottom-1 h-1.5 overflow-hidden rounded-full sm:-bottom-2 sm:h-2" />
+                  <BrandStripe className="stripe-grow absolute inset-x-0 -bottom-1 h-1.5 overflow-hidden rounded-full sm:-bottom-2 sm:h-2" />
                 </span>
               </span>
               <span className="mt-3 block text-2xl sm:mt-4 sm:text-4xl lg:text-5xl">حضور، كورسات، درجات <span className="text-amber-500">ومتابعة</span></span>
@@ -80,7 +80,7 @@ export default function Landing() {
               </div>
             </form>
 
-            <div className="flex flex-wrap items-center justify-center gap-2.5 text-xs sm:text-sm">
+            <div className="flex flex-wrap items-center justify-center gap-2.5 text-xs sm:text-sm" data-reveal-stagger="90" data-reveal-child="zoom">
               {[
                 { icon: PlayCircle, text: `${courses.length || "+"} كورس متاح`, cls: "bg-teal-50 border-teal-200 text-teal-800 dark:bg-teal-500/10 dark:border-teal-400/25 dark:text-teal-300", ic: "text-teal-600" },
                 { icon: MonitorPlay, text: `${totalLessons || "+"} درس مسجل`, cls: "bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-500/10 dark:border-amber-400/25 dark:text-amber-300", ic: "text-amber-600" },
@@ -96,7 +96,7 @@ export default function Landing() {
 
           <div className="grid items-center gap-8 lg:grid-cols-12">
             {/* Why card */}
-            <div className="relative overflow-hidden rounded-[2rem] bg-hero p-6 text-white shadow-2xl shadow-navy/30 sm:p-8 lg:col-span-6">
+            <div data-reveal="start" className="relative overflow-hidden rounded-[2rem] bg-hero p-6 text-white shadow-2xl shadow-navy/30 sm:p-8 lg:col-span-6">
               <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "18px 18px" }} />
               <BrandStripe className="absolute inset-x-0 top-0 h-1.5" />
               <div className="relative space-y-6">
@@ -104,7 +104,7 @@ export default function Landing() {
                   <span className="bg-gold grid size-12 shrink-0 place-items-center rounded-2xl text-navy shadow-lg shadow-amber-500/30"><Award className="size-6" /></span>
                   <span>لماذا <span className="text-amber-300">{APP_NAME}</span>؟</span>
                 </h3>
-                <ol className="space-y-3">
+                <ol className="space-y-3" data-reveal-stagger="150" data-reveal-child="start">
                   {[
                     { icon: MonitorPlay, t: "كورسات ودروس مسجلة لكل مجموعة", d: "الطالب يذاكر في أي وقت، والمنصة تحفظ تقدمه في كل درس.", bar: "bg-teal-400", ic: "bg-teal-400/15 border-teal-300/30 text-teal-300" },
                     { icon: QrCode, t: "حضور في ثوانٍ وتنبيه فوري", d: "يُرسل إشعار لولي الأمر تلقائياً عند الغياب أو التأخير.", bar: "bg-amber-400", ic: "bg-amber-400/15 border-amber-300/30 text-amber-300" },
@@ -112,7 +112,7 @@ export default function Landing() {
                   ].map((x, i) => (
                     <li key={x.t} className="shine group relative flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.06] p-4 transition hover:-translate-x-1 hover:bg-white/[0.11]">
                       <span className={`absolute start-0 top-4 bottom-4 w-1 rounded-e-full opacity-70 ${x.bar}`} />
-                      <span className={`grid size-11 shrink-0 place-items-center rounded-xl border ${x.ic}`}><x.icon className="size-5" /></span>
+                      <span className={`wiggle grid size-11 shrink-0 place-items-center rounded-xl border ${x.ic}`}><x.icon className="size-5" /></span>
                       <div className="min-w-0 flex-1">
                         <span className="block text-sm font-black leading-snug sm:text-base">{x.t}</span>
                         <span className="mt-1 block text-xs leading-relaxed text-slate-300 sm:text-[13px]">{x.d}</span>
@@ -122,7 +122,7 @@ export default function Landing() {
                   ))}
                 </ol>
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <Link href="/courses" className="bg-gold flex items-center justify-center gap-2 rounded-2xl py-4 text-sm font-black text-navy shadow-xl shadow-amber-500/25 transition-transform hover:-translate-y-0.5">
+                  <Link href="/courses" className="bg-gold glow-gold shimmer-auto flex items-center justify-center gap-2 rounded-2xl py-4 text-sm font-black text-navy transition-transform hover:-translate-y-0.5">
                     <PlayCircle className="size-4" /> تصفح الكورسات
                   </Link>
                   <Link href={cta.href} className="flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 py-4 text-sm font-black transition-colors hover:bg-white/15">
@@ -133,7 +133,16 @@ export default function Landing() {
             </div>
 
             {/* Product preview */}
-            <div className="relative space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl lg:col-span-6 dark:border-line dark:bg-surface">
+            <div data-reveal="end" className="relative space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl lg:col-span-6 dark:border-line dark:bg-surface">
+              <div className="float-mid absolute -top-5 -start-4 z-10 hidden items-center gap-2 rounded-2xl border border-emerald-200 bg-white px-3 py-2 text-xs font-black text-emerald-700 shadow-xl sm:flex dark:border-emerald-900 dark:bg-surface-2">
+                <span className="ping-dot size-2 rounded-full bg-emerald-500" /> تم تسجيل حضور أحمد
+              </div>
+              <div className="float-fast absolute -bottom-5 -end-3 z-10 hidden items-center gap-2 rounded-2xl border border-amber-200 bg-white px-3 py-2 text-xs font-black text-amber-700 shadow-xl sm:flex dark:border-amber-900 dark:bg-surface-2">
+                🏆 درجة الكويز 19 / 20
+              </div>
+              <div className="float-slow absolute top-1/2 -start-10 z-10 hidden items-center gap-2 rounded-2xl border border-sky-200 bg-white px-3 py-2 text-xs font-black text-sky-700 shadow-xl xl:flex dark:border-sky-900 dark:bg-surface-2">
+                🔔 إشعار جديد لولي الأمر
+              </div>
               <div className="flex items-center justify-between">
                 <span className="rounded-full border border-teal-200 bg-teal-50 px-3.5 py-1 text-xs font-bold text-teal-700">لوحة الطالب</span>
                 <span className="flex items-center gap-1 text-xs font-semibold text-amber-700"><Smartphone className="size-3.5 text-amber-500" /> موبايل + ويب</span>
@@ -141,7 +150,7 @@ export default function Landing() {
               <div className="rounded-2xl bg-welcome p-5 text-white">
                 <div className="text-xs text-white/80">صباح الخير 👋</div>
                 <div className="mt-1 text-xl font-black">أحمد محمد</div>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/20"><div className="h-full w-[72%] rounded-full bg-amber-300" /></div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/20"><div className="bar-fill h-full w-[72%] rounded-full bg-amber-300" /></div>
                 <div className="mt-1.5 text-xs text-white/85">أنجزت 72% من دروسك</div>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -153,7 +162,7 @@ export default function Landing() {
                 ].map((s) => (
                   <div key={s.l} className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-3 dark:border-line dark:bg-surface-2">
                     <span className={`grid size-10 place-items-center rounded-xl ${s.c}`}><s.i className="size-5" /></span>
-                    <div><div className="font-black leading-tight text-navy dark:text-white">{s.v}</div><div className="text-[11px] text-slate-500">{s.l}</div></div>
+                    <div><div className="font-black leading-tight text-navy dark:text-white" {...(/^\d+%$/.test(s.v) ? { "data-count": parseInt(s.v), "data-suffix": "%" } : {})}>{s.v}</div><div className="text-[11px] text-slate-500">{s.l}</div></div>
                   </div>
                 ))}
               </div>
@@ -166,12 +175,12 @@ export default function Landing() {
       {/* ─── Courses ─── */}
       <section id="courses" className="relative border-t border-slate-200 bg-surface py-24 dark:border-line">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto mb-14 max-w-3xl space-y-4 text-center">
+          <div className="mx-auto mb-14 max-w-3xl space-y-4 text-center" data-reveal-stagger="110">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-black text-navy shadow-sm dark:border-line dark:bg-surface-2 dark:text-white">
               <Sparkles className="size-4 text-amber-500" /> المحتوى التعليمي للمركز
             </div>
             <h2 className="text-3xl font-black text-navy sm:text-5xl dark:text-white">الكورسات والدروس <span className="ms-2 inline-grid min-w-12 place-items-center rounded-2xl bg-teal-50 px-3 align-middle text-2xl text-teal-600 sm:text-3xl dark:bg-teal-500/15 dark:text-teal-300">{courses.length}</span></h2>
-            <BrandStripe className="mx-auto h-1.5 w-24 overflow-hidden rounded-full" />
+            <BrandStripe className="stripe-grow mx-auto h-1.5 w-24 overflow-hidden rounded-full" />
             <p className="text-sm text-slate-600 sm:text-base dark:text-muted">دروس مسجلة بجودة عالية لكل مجموعة، ومتابعة تقدم الطالب في كل درس، وكويزات بعد كل جزء.</p>
           </div>
           {catalog.loading && !catalog.data ? (
@@ -180,11 +189,11 @@ export default function Landing() {
             <p className="text-center text-slate-500">لا توجد كورسات منشورة حالياً.</p>
           ) : (
             <>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="140" data-reveal-child="flip">
                 {courses.slice(0, 6).map((c) => <CourseCard key={c.id} c={c} currency={currency} />)}
               </div>
-              <div className="mt-12 text-center">
-                <Link href="/courses" className="shine inline-flex items-center gap-2 rounded-full bg-navy px-8 py-4 font-black text-white shadow-xl shadow-navy/25 transition hover:-translate-y-0.5">
+              <div className="mt-12 text-center" data-reveal="zoom">
+                <Link href="/courses" className="shimmer-auto inline-flex items-center gap-2 rounded-full bg-navy px-8 py-4 font-black text-white shadow-xl shadow-navy/25 transition hover:-translate-y-0.5">
                   كل الكورسات <ArrowLeft className="size-5" />
                 </Link>
               </div>
@@ -195,7 +204,7 @@ export default function Landing() {
 
       {/* ─── Stats strip ─── */}
       <section className="mx-auto -mb-12 max-w-6xl px-5 pt-16">
-        <div className="grid gap-4 rounded-[28px] border border-slate-200 bg-white p-6 shadow-soft sm:grid-cols-2 lg:grid-cols-4 dark:border-line dark:bg-surface">
+        <div data-reveal="zoom" className="grid gap-4 rounded-[28px] border border-slate-200 bg-white p-6 shadow-soft sm:grid-cols-2 lg:grid-cols-4 dark:border-line dark:bg-surface">
           {[
             { i: QrCode, c: "bg-teal-50 text-teal-600", t: "حضور في ثوانٍ", s: "QR متغير + يدوي" },
             { i: BellRing, c: "bg-rose-50 text-rose-600", t: "إشعار فوري", s: "لولي الأمر عند الغياب" },
@@ -203,7 +212,7 @@ export default function Landing() {
             { i: Smartphone, c: "bg-sky-50 text-sky-600", t: "ويب + موبايل", s: "نفس الحساب والبيانات" },
           ].map((x) => (
             <div key={x.t} className="flex items-center gap-4">
-              <span className={`grid size-12 shrink-0 place-items-center rounded-2xl ${x.c}`}><x.i className="size-6" /></span>
+              <span className={`float-mid grid size-12 shrink-0 place-items-center rounded-2xl ${x.c}`}><x.i className="size-6" /></span>
               <div><div className="font-extrabold text-navy dark:text-white">{x.t}</div><div className="text-sm text-muted">{x.s}</div></div>
             </div>
           ))}
@@ -213,15 +222,15 @@ export default function Landing() {
       {/* ─── Features ─── */}
       <section id="features" className="bg-soft-hero pt-28 pb-24">
         <div className="mx-auto max-w-7xl px-5">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-black text-navy md:text-5xl dark:text-white">كل الأدوات في <span className="text-teal-600">مكان واحد</span></h2>
-            <BrandStripe className="mx-auto mt-4 h-1.5 w-24 overflow-hidden rounded-full" />
+          <div className="mx-auto max-w-2xl text-center" data-reveal-stagger="110">
+            <h2 className="text-3xl font-black text-navy md:text-5xl dark:text-white">كل الأدوات في <span className="shimmer-text">مكان واحد</span></h2>
+            <BrandStripe className="stripe-grow mx-auto mt-4 h-1.5 w-24 overflow-hidden rounded-full" />
             <p className="mt-4 text-lg text-muted">صُممت خصيصاً للسناتر والمدارس في مصر والخليج</p>
           </div>
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="110" data-reveal-child="zoom">
             {features.map((f) => (
               <div key={f.title} className="shine group rounded-[28px] border border-slate-200 bg-white p-7 shadow-soft transition hover:-translate-y-1 hover:border-teal-300 hover:shadow-[0_20px_40px_-12px_rgba(15,23,42,0.12)] dark:border-line dark:bg-surface">
-                <span className={`grid size-14 place-items-center rounded-2xl ${f.cls}`}><f.icon className="size-7" /></span>
+                <span className={`wiggle grid size-14 place-items-center rounded-2xl ${f.cls}`}><f.icon className="size-7" /></span>
                 <h3 className="mt-5 text-xl font-extrabold text-navy dark:text-white">{f.title}</h3>
                 <p className="mt-2 leading-7 text-muted">{f.text}</p>
               </div>
@@ -233,14 +242,14 @@ export default function Landing() {
       {/* ─── Portals ─── */}
       <section id="portals" className="border-t border-slate-200 bg-surface py-24 dark:border-line">
         <div className="mx-auto max-w-7xl px-5">
-          <div className="mx-auto max-w-2xl text-center">
+          <div className="mx-auto max-w-2xl text-center" data-reveal-stagger="110">
             <h2 className="text-3xl font-black text-navy md:text-5xl dark:text-white">بوابة لكل مستخدم</h2>
-            <BrandStripe className="mx-auto mt-4 h-1.5 w-24 overflow-hidden rounded-full" />
+            <BrandStripe className="stripe-grow mx-auto mt-4 h-1.5 w-24 overflow-hidden rounded-full" />
             <p className="mt-4 text-lg text-muted">كل شخص يرى ما يخصه فقط — بصلاحيات محمية من قاعدة البيانات</p>
           </div>
-          <div className="mt-14 grid gap-6 lg:grid-cols-3">
+          <div className="mt-14 grid gap-6 lg:grid-cols-3" data-reveal-stagger="160" data-reveal-child="flip">
             {portals.map((p, i) => (
-              <div key={p.title} className={i === 0 ? "relative overflow-hidden rounded-[28px] bg-hero p-8 text-white shadow-2xl shadow-navy/30" : "rounded-[28px] border border-slate-200 bg-white p-8 shadow-soft dark:border-line dark:bg-surface-2"}>
+              <div key={p.title} className={i === 0 ? "glow-teal relative overflow-hidden rounded-[28px] bg-hero p-8 text-white" : "rounded-[28px] border border-slate-200 bg-white p-8 shadow-soft dark:border-line dark:bg-surface-2"}>
                 {i === 0 && <BrandStripe className="absolute inset-x-0 top-0 h-1.5" />}
                 <div className={i === 0 ? "bg-gold grid size-14 place-items-center rounded-2xl text-navy" : "grid size-14 place-items-center rounded-2xl bg-teal-50 text-teal-600"}><p.icon className="size-7" /></div>
                 <h3 className={`mt-5 text-2xl font-black ${i === 0 ? "" : "text-navy dark:text-white"}`}>{p.title}</h3>
@@ -260,7 +269,7 @@ export default function Landing() {
 
       {/* ─── Security + CTA ─── */}
       <section id="security" className="mx-auto max-w-7xl px-5 py-24">
-        <div className="relative grid items-center gap-10 overflow-hidden rounded-[32px] bg-hero p-8 text-white shadow-2xl shadow-navy/30 md:p-12 lg:grid-cols-[1fr_auto]">
+        <div data-reveal="zoom" className="relative grid items-center gap-10 overflow-hidden rounded-[32px] bg-hero p-8 text-white shadow-2xl shadow-navy/30 md:p-12 lg:grid-cols-[1fr_auto]">
           <BrandStripe className="absolute inset-x-0 top-0 h-1.5" />
           <div>
             <div className="flex items-center gap-3">
@@ -272,7 +281,7 @@ export default function Landing() {
               وروابط الفيديو لا تظهر إلا للطالب المسجل في المجموعة. لكل مركز قاعدة بيانات مستقلة تماماً.
             </p>
           </div>
-          <Link href={cta.href} className="bg-gold inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-lg font-extrabold text-navy shadow-xl shadow-amber-500/25 transition hover:-translate-y-0.5">
+          <Link href={cta.href} className="bg-gold glow-gold shimmer-auto inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-lg font-extrabold text-navy transition hover:-translate-y-0.5">
             {cta.label} <ArrowLeft className="size-5" />
           </Link>
         </div>

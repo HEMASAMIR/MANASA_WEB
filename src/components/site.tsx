@@ -62,7 +62,7 @@ export function SiteHeader() {
           {NAV.map((l) => {
             if (l.highlighted) {
               return (
-                <Link key={l.href} href={l.href} className="shine mx-1 inline-flex items-center gap-1.5 rounded-full bg-navy px-4 py-2 text-[13px] font-black text-white shadow-lg shadow-navy/25 transition-all hover:-translate-y-0.5">
+                <Link key={l.href} href={l.href} className="shimmer-auto mx-1 inline-flex items-center gap-1.5 rounded-full bg-navy px-4 py-2 text-[13px] font-black text-white shadow-lg shadow-navy/25 transition-all hover:-translate-y-0.5">
                   <Sparkles className="size-4 text-amber-300" /> {l.label}
                 </Link>
               );
@@ -123,7 +123,7 @@ export function SiteFooter({ phone }: { phone?: string | null }) {
     <footer id="contact" className="relative overflow-hidden bg-navy text-white">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(20,184,166,0.25),transparent_55%),radial-gradient(ellipse_at_bottom_right,rgba(245,158,11,0.18),transparent_55%)]" />
       <BrandStripe className="relative h-1.5" />
-      <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-3">
+      <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-3" data-reveal-stagger="140">
         <div>
           <div className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -178,7 +178,7 @@ export function CourseCard({ c, currency = "ج.م" }: { c: CatalogCourse; curren
   return (
     <div className="group relative h-full rounded-[2rem] p-[2px] shadow-xl shadow-slate-900/[0.06] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
       style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${color} 55%, var(--surface)), var(--surface) 50%, color-mix(in srgb, ${color} 40%, var(--surface)))` }}>
-      <div className="shine relative flex h-full flex-col overflow-hidden rounded-[calc(2rem-2px)] bg-surface">
+      <div className="shine sweep-once relative flex h-full flex-col overflow-hidden rounded-[calc(2rem-2px)] bg-surface">
         <div className="relative h-40 overflow-hidden" style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${color} 70%, white), ${color})` }}>
           <div className="dot-pattern absolute inset-0 opacity-25" />
           <span className="absolute -top-10 -end-10 size-40 rounded-full bg-white/15 transition-transform duration-700 group-hover:scale-125" />
@@ -187,7 +187,7 @@ export function CourseCard({ c, currency = "ج.م" }: { c: CatalogCourse; curren
           <div className="relative flex h-full items-end justify-between p-5 text-white">
             <div>
               <span className="mb-1 block text-[11px] font-black tracking-wide text-white/85">{c.grade || c.class_name}</span>
-              <span className="block text-6xl leading-none drop-shadow-[0_6px_16px_rgba(0,0,0,0.18)] transition-transform duration-500 group-hover:scale-110">{c.icon || "📚"}</span>
+              <span className="float-mid block text-6xl leading-none drop-shadow-[0_6px_16px_rgba(0,0,0,0.18)] transition-transform duration-500 group-hover:scale-110">{c.icon || "📚"}</span>
             </div>
             <span className="grid size-12 place-items-center rounded-2xl border border-white/30 bg-white/20 backdrop-blur transition-transform duration-500 group-hover:rotate-12"><PlayCircle className="size-6" /></span>
           </div>

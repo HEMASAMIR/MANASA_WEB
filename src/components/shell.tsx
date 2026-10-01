@@ -219,7 +219,7 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
           </div>
         </header>
 
-        <main className={cx("mx-auto max-w-[1400px] px-4 py-6 md:px-8 md:py-8", bottom.length ? "pb-28 lg:pb-8" : "")}>{children}</main>
+        <main data-reveal-auto className={cx("mx-auto max-w-[1400px] px-4 py-6 md:px-8 md:py-8", bottom.length ? "pb-28 lg:pb-8" : "")}>{children}</main>
       </div>
 
       {/* Phone bottom bar */}

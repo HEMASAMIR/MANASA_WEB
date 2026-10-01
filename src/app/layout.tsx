@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/lib/theme";
 import { langInitScript, themeInitScript } from "@/lib/init-scripts";
 import { UiProvider } from "@/components/ui";
 import { LangProvider } from "@/lib/i18n";
+import { Motion } from "@/components/motion";
 
 const cairo = Cairo({ variable: "--font-cairo", subsets: ["arabic", "latin"], weight: ["400", "500", "600", "700", "800", "900"] });
 
@@ -33,7 +34,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <LangProvider>
             <AuthProvider>
-              <UiProvider>{children}</UiProvider>
+              <UiProvider>
+                {children}
+                <Motion />
+              </UiProvider>
             </AuthProvider>
           </LangProvider>
         </ThemeProvider>

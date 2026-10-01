@@ -45,7 +45,7 @@ export default function CourseDetail() {
               <div className="absolute -bottom-32 start-20 size-72 rounded-full" style={{ background: `${color}40` }} />
               <BrandStripe className="relative h-1.5" />
               <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1fr_auto] lg:px-8">
-                <div>
+                <div data-reveal-stagger="110">
                   <Link href="/courses" className="mb-5 inline-flex items-center gap-1.5 text-sm font-bold text-white/75 hover:text-white"><ArrowRight className="size-4" /> كل الكورسات</Link>
                   <div className="flex flex-wrap gap-2 text-xs font-black">
                     {course.grade && <span className="rounded-full bg-white/15 px-3 py-1">{course.grade}</span>}
@@ -61,12 +61,12 @@ export default function CourseDetail() {
                     <span className="flex items-center gap-2"><Users className="size-4 text-amber-300" /> لطلاب المجموعة</span>
                   </div>
                 </div>
-                <div className="w-full rounded-[2rem] border border-white/15 bg-white/10 p-6 backdrop-blur lg:w-80">
-                  <div className="grid size-24 place-items-center rounded-3xl bg-white/15 text-6xl">{course.icon || "📚"}</div>
+                <div data-reveal="zoom" className="w-full rounded-[2rem] border border-white/15 bg-white/10 p-6 backdrop-blur lg:w-80">
+                  <div className="float-mid grid size-24 place-items-center rounded-3xl bg-white/15 text-6xl">{course.icon || "📚"}</div>
                   {course.monthly_fee > 0 && (
                     <div className="mt-5 flex items-baseline gap-2"><span className="text-4xl font-black">{Fmt.number(course.monthly_fee)}</span><span className="font-bold text-white/80">{currency} / شهرياً</span></div>
                   )}
-                  <Link href={action.href} className="bg-gold mt-5 flex items-center justify-center gap-2 rounded-2xl py-4 font-black text-navy shadow-xl shadow-amber-500/25 transition hover:-translate-y-0.5">
+                  <Link href={action.href} className="bg-gold glow-gold shimmer-auto mt-5 flex items-center justify-center gap-2 rounded-2xl py-4 font-black text-navy transition hover:-translate-y-0.5">
                     <action.icon className="size-5" /> {action.label}
                   </Link>
                   {!profile && <Link href="/register" className="mt-2 flex items-center justify-center gap-2 rounded-2xl border border-white/25 py-3 text-sm font-bold hover:bg-white/10">إنشاء حساب طالب</Link>}
@@ -76,13 +76,13 @@ export default function CourseDetail() {
 
             {/* Lessons */}
             <section className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_340px] lg:px-8">
-              <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-line dark:bg-surface">
+              <div data-reveal="up" className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-line dark:bg-surface">
                 <div className="border-b border-slate-200 bg-gradient-to-l from-teal-50 to-white px-6 py-5 dark:border-line dark:from-teal-950/30 dark:to-surface">
                   <h2 className="flex items-center gap-2 text-lg font-black text-navy dark:text-white"><ListVideo className="size-5 text-teal-600" /> محتوى الكورس</h2>
                   <p className="mt-0.5 text-xs font-bold text-slate-500">{course.lessons.length} درس{mins > 0 ? ` • ${durationLabel(mins)}` : ""}</p>
                 </div>
                 {course.lessons.length === 0 ? <EmptyState icon={PlayCircle} message="لم تُضف دروس لهذا الكورس بعد" /> : (
-                  <ol className="divide-y divide-slate-100 dark:divide-line">
+                  <ol className="divide-y divide-slate-100 dark:divide-line" data-reveal-stagger="90" data-reveal-child="start">
                     {course.lessons.map((l, i) => (
                       <li key={l.id}>
                         <Link href={action.href} className="group flex items-center gap-4 border-s-4 border-transparent px-5 py-4 transition-colors hover:border-teal-500 hover:bg-teal-50/60 dark:hover:bg-teal-950/20">
@@ -101,7 +101,7 @@ export default function CourseDetail() {
                   </ol>
                 )}
               </div>
-              <aside className="space-y-4">
+              <aside className="space-y-4" data-reveal-stagger="160" data-reveal-child="end">
                 <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-line dark:bg-surface">
                   <h3 className="font-black text-navy dark:text-white">ماذا ستحصل عليه؟</h3>
                   <ul className="mt-4 space-y-3 text-sm font-semibold text-slate-700 dark:text-ink/85">
@@ -121,8 +121,8 @@ export default function CourseDetail() {
             {related.length > 0 && (
               <section className="border-t border-slate-200 bg-surface py-14 dark:border-line">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                  <h2 className="mb-8 text-2xl font-black text-navy dark:text-white">كورسات أخرى</h2>
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{related.map((c) => <CourseCard key={c.id} c={c} currency={currency} />)}</div>
+                  <h2 data-reveal="blur" className="mb-8 text-2xl font-black text-navy dark:text-white">كورسات أخرى</h2>
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="140" data-reveal-child="flip">{related.map((c) => <CourseCard key={c.id} c={c} currency={currency} />)}</div>
                 </div>
               </section>
             )}
