@@ -8,7 +8,7 @@
  */
 import { buildSeed, uid, type DB, type Row } from "./seed";
 
-const STORE = "manara-demo-db-v2";
+const STORE = "manara-demo-db-v4";
 const SESSION = "manara-demo-session";
 
 let db: DB | null = null;
@@ -18,7 +18,11 @@ function data(): DB {
     const raw = localStorage.getItem(STORE);
     if (raw) db = JSON.parse(raw);
   } catch {}
-  if (!db) db = buildSeed();
+  if (!db) {
+    // Save straight away: the seed has random ids, so rebuilding it on reload would orphan the session.
+    db = buildSeed();
+    try { localStorage.setItem(STORE, JSON.stringify(db)); } catch {}
+  }
   return db!;
 }
 let saveTimer: ReturnType<typeof setTimeout> | null = null;

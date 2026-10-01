@@ -10,6 +10,7 @@ import {
 import { useAuth } from "@/lib/auth";
 import { useAsync } from "@/lib/hooks";
 import { loadCatalog } from "@/lib/catalog";
+import { TRACKS } from "@/lib/education";
 import { APP_NAME } from "@/lib/supabase";
 import { homeFor } from "@/lib/types";
 import { BrandStripe, CourseCard, DemoBanner, SiteFooter, SiteHeader } from "@/components/site";
@@ -167,6 +168,40 @@ export default function Landing() {
                 ))}
               </div>
               <p className="text-center text-[11px] text-muted">مثال توضيحي لواجهة الطالب</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Baccalaureate ─── */}
+      <section id="baccalaureate" className="bg-surface pt-20 pb-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div data-reveal="zoom" className="relative grid items-center gap-8 overflow-hidden rounded-[2rem] bg-hero p-6 text-white shadow-2xl shadow-navy/30 sm:p-10 lg:grid-cols-2">
+            <BrandStripe className="absolute inset-x-0 top-0 h-1.5" />
+            <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "18px 18px" }} />
+            <div className="relative space-y-5">
+              <span className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-4 py-1.5 text-xs font-black shadow-lg shadow-rose-500/30">
+                <span className="ping-dot size-2 rounded-full bg-white" /> جديد 2026/2027
+              </span>
+              <h2 className="text-3xl font-black leading-tight sm:text-4xl lg:text-5xl">دليل <span className="text-amber-300">البكالوريا المصرية</span> والثانوية العامة</h2>
+              <p className="leading-8 text-slate-300">المسارات الأربعة، المواد من أولى لتالتة ثانوي، توزيع الـ 600 درجة، مواعيد الفرص الامتحانية — وحاسبة مجموع تفاعلية.</p>
+              <div className="flex flex-wrap gap-3">
+                <Link href="/baccalaureate#tracks" className="bg-gold glow-gold shimmer-auto inline-flex items-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-black text-navy transition hover:-translate-y-0.5">
+                  <GraduationCap className="size-5" /> اكتشف مسارك
+                </Link>
+                <Link href="/baccalaureate#calculator" className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-black transition hover:bg-white/15">
+                  احسب مجموعك <ArrowLeft className="size-4" />
+                </Link>
+              </div>
+            </div>
+            <div className="relative grid grid-cols-2 gap-3" data-reveal-stagger="110" data-reveal-child="zoom">
+              {TRACKS.map((t) => (
+                <Link key={t.id} href="/baccalaureate#tracks" className="shine group rounded-3xl border border-white/10 bg-white/[0.06] p-4 transition hover:-translate-y-1 hover:bg-white/[0.12] sm:p-5">
+                  <span className="grid size-14 place-items-center rounded-2xl text-3xl transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6" style={{ background: `${t.color}33`, boxShadow: `inset 0 0 0 1px ${t.color}66` }}>{t.emoji}</span>
+                  <span className="mt-3 block text-sm font-black leading-snug sm:text-base">{t.name}</span>
+                  <span className="mt-1 block text-[11px] font-semibold text-slate-300">{t.g3[0].replace(" (مستوى رفيع)", "")} • {t.g3[1].replace(" (مستوى رفيع)", "")}</span>
+                </Link>
+              ))}
             </div>
           </div>
         </div>

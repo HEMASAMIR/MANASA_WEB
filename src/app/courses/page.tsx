@@ -7,6 +7,7 @@ import { useAsync } from "@/lib/hooks";
 import { loadCatalog } from "@/lib/catalog";
 import { BrandStripe, CourseCard, DemoBanner, SiteFooter, SiteHeader } from "@/components/site";
 import { EmptyState, Skeleton, cx } from "@/components/ui";
+import { SYSTEMS, STAGES, parseStage, subjectTracks, type SystemId } from "@/lib/curriculum";
 
 export default function CoursesPage() {
   return (
@@ -20,12 +21,27 @@ function CoursesInner() {
   const params = useSearchParams();
   const catalog = useAsync(() => loadCatalog(), []);
   const [q, setQ] = useState(params.get("q") ?? "");
-  const [grade, setGrade] = useState("all");
+  const initialStage = STAGES.find((s) => s.id === params.get("stage")) ?? null;
+  const [system, setSystem] = useState<SystemId | "all" | "other">(initialStage?.system ?? "all");
+  const [stageId, setStageId] = useState<string | null>(initialStage?.id ?? null);
+  const [trackId, setTrackId] = useState<string | null>(initialStage?.tracks.some((x) => x.id === params.get("track")) ? params.get("track") : null);
   const courses = useMemo(() => catalog.data?.courses ?? [], [catalog.data]);
-  const grades = useMemo(() => [...new Set(courses.map((c) => c.grade).filter(Boolean))], [courses]);
+  const stageOf = (g: string) => parseStage(g);
+  const systemsHere = SYSTEMS.filter((s) => courses.some((c) => stageOf(c.grade)?.system === s.id));
+  const hasOther = courses.some((c) => !stageOf(c.grade));
+  const stagesHere = STAGES.filter((s) => s.system === system && courses.some((c) => stageOf(c.grade)?.id === s.id));
+  const stage = STAGES.find((s) => s.id === stageId) ?? null;
+  const pickSystem = (s: typeof system) => { setSystem(s); setStageId(null); setTrackId(null); };
   const shown = courses.filter((c) => {
     const t = q.trim();
-    if (grade !== "all" && c.grade !== grade) return false;
+    const cs = stageOf(c.grade);
+    if (system === "other" && cs) return false;
+    if (system !== "all" && system !== "other" && cs?.system !== system) return false;
+    if (stageId && cs?.id !== stageId) return false;
+    if (trackId && cs) {
+      const tr = subjectTracks(cs, c.subject);
+      if (tr.length && !tr.some((x) => x.id === trackId)) return false;
+    }
     if (!t) return true;
     return [c.title, c.subject, c.class_name, c.teacher, c.description].some((x) => x?.includes(t)) || c.lessons.some((l) => l.title.includes(t));
   });
@@ -48,13 +64,23 @@ function CoursesInner() {
             <Search className="ms-3 size-5 shrink-0 text-teal-600" />
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ابحث باسم الكورس أو الدرس أو المدرس..." className="w-full bg-transparent px-3 py-2.5 text-sm font-semibold text-ink placeholder-slate-400 outline-none" />
           </div>
-          {grades.length > 1 && (
-            <div className="flex flex-wrap justify-center gap-2 pt-1">
-              {["all", ...grades].map((g) => (
-                <button key={g} onClick={() => setGrade(g)} className={cx("rounded-full border px-5 py-2 text-xs font-black transition-all cursor-pointer", grade === g ? "border-transparent bg-navy text-white shadow-lg" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-line dark:bg-surface dark:text-muted")}>
-                  {g === "all" ? "جميع الصفوف" : g}
-                </button>
-              ))}
+          {(systemsHere.length > 0 || hasOther) && (
+            <div className="space-y-3 pt-1">
+              <div className="flex flex-wrap justify-center gap-2">
+                <FilterChip on={system === "all"} onClick={() => pickSystem("all")}>جميع الصفوف</FilterChip>
+                {systemsHere.map((s) => <FilterChip key={s.id} on={system === s.id} color={s.color} onClick={() => pickSystem(s.id)}>{s.emoji} {s.name}</FilterChip>)}
+                {hasOther && systemsHere.length > 0 && <FilterChip on={system === "other"} onClick={() => pickSystem("other")}>صفوف أخرى</FilterChip>}
+              </div>
+              {stagesHere.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-2">
+                  {stagesHere.map((s) => <FilterChip key={s.id} small on={stageId === s.id} onClick={() => { setStageId(stageId === s.id ? null : s.id); setTrackId(null); }}>{s.label.split(" — ")[0]}</FilterChip>)}
+                </div>
+              )}
+              {stage && stage.tracks.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-2">
+                  {stage.tracks.map((x) => <FilterChip key={x.id} small on={trackId === x.id} color={x.color} onClick={() => setTrackId(trackId === x.id ? null : x.id)}>{x.emoji} {x.name}</FilterChip>)}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -73,5 +99,15 @@ function CoursesInner() {
       </section>
       <SiteFooter phone={catalog.data?.center?.contact_phone} />
     </div>
+  );
+}
+
+function FilterChip({ on, color, small, onClick, children }: { on: boolean; color?: string; small?: boolean; onClick(): void; children: React.ReactNode }) {
+  return (
+    <button onClick={onClick}
+      className={cx("rounded-full border font-black transition-all cursor-pointer", small ? "px-4 py-1.5 text-[11px]" : "px-5 py-2 text-xs", on ? "border-transparent text-white shadow-lg" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-line dark:bg-surface dark:text-muted", on && !color && "bg-navy dark:bg-teal-600")}
+      style={on && color ? { background: color } : undefined}>
+      {children}
+    </button>
   );
 }

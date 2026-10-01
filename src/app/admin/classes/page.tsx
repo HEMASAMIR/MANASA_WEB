@@ -8,12 +8,15 @@ import { useAuth, useStaffPerms } from "@/lib/auth";
 import { useAsync } from "@/lib/hooks";
 import { Fmt, colorFor } from "@/lib/fmt";
 import type { ClassRow } from "@/lib/types";
-import { Async, Badge, Button, Card, EmptyState, Field, Input, Modal, PageHeader, Select, Switch, Tabs, cx, useUi } from "@/components/ui";
+import { STAGES, findSubject, parseStage } from "@/lib/curriculum";
+import { CurriculumBadges, StagePicker, SubjectName, SubjectPicker } from "@/components/curriculum";
+import { Async, Badge, Button, Card, Chips, EmptyState, Field, Input, Modal, PageHeader, Select, Switch, Tabs, cx, useUi } from "@/components/ui";
 
 export default function ClassesPage() {
   const perms = useStaffPerms();
   const { settings } = useAuth();
   const [showInactive, setShowInactive] = useState(false);
+  const [stageF, setStageF] = useState("all");
   const [view, setView] = useState<"cards" | "week">("cards");
   const state = useAsync(() => classApi.list(true), []);
   const [editing, setEditing] = useState<ClassRow | "new" | null>(null);
@@ -28,10 +31,14 @@ export default function ClassesPage() {
       </div>
       <Async state={state}>
         {(all) => {
-          const list = all.filter((c) => showInactive || c.is_active);
-          if (!list.length) return <EmptyState icon={Users} message="لا توجد مجموعات بعد" action={perms.canManage && <Button icon={Plus} onClick={() => setEditing("new")}>أضف أول مجموعة</Button>} />;
-          if (view === "week") return <WeekView classes={list.filter((c) => c.is_active)} />;
-          return (
+          const stagesHere = STAGES.filter((s) => all.some((c) => parseStage(c.grade)?.id === s.id));
+          const list = all.filter((c) => (showInactive || c.is_active) && (stageF === "all" || (parseStage(c.grade)?.id ?? "other") === stageF));
+          const filter = stagesHere.length > 0 && (
+            <div className="mb-5"><Chips value={stageF} onChange={setStageF} items={[{ value: "all", label: "كل الصفوف" }, ...stagesHere.map((s) => ({ value: s.id, label: s.short })), ...(all.some((c) => !parseStage(c.grade)) ? [{ value: "other", label: "صفوف أخرى" }] : [])]} /></div>
+          );
+          if (!list.length) return <>{filter}<EmptyState icon={Users} message="لا توجد مجموعات بعد" action={perms.canManage && <Button icon={Plus} onClick={() => setEditing("new")}>أضف أول مجموعة</Button>} /></>;
+          if (view === "week") return <>{filter}<WeekView classes={list.filter((c) => c.is_active)} /></>;
+          return (<>{filter}
             <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
               {list.map((c, i) => {
                 const color = colorFor(c.subject || c.name);
@@ -44,8 +51,8 @@ export default function ClassesPage() {
                         <div className="min-w-0 flex-1">
                           <h3 className="truncate text-lg font-black">{c.name}</h3>
                           <div className="mt-1 flex flex-wrap gap-1.5">
-                            {c.grade && <Badge tone="primary" dot={false}>{c.grade}</Badge>}
-                            {c.subject && <Badge tone="info" dot={false}>{c.subject}</Badge>}
+                            {c.subject && <Badge tone="info" dot={false}><SubjectName n={c.subject} /></Badge>}
+                            <CurriculumBadges grade={c.grade} subject={c.subject} />
                             {!c.is_active && <Badge tone="neutral">موقوفة</Badge>}
                           </div>
                         </div>
@@ -86,7 +93,7 @@ export default function ClassesPage() {
                   </div>
                 );
               })}
-            </div>
+            </div></>
           );
         }}
       </Async>
@@ -142,22 +149,25 @@ function ClassForm({ cls, onClose, onDone }: { cls: ClassRow | null; onClose(): 
   );
   const [busy, setBusy] = useState(false);
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setF({ ...f, [k]: e.target.value });
+  const stage = parseStage(f.grade);
+  const suggested = f.subject.trim() ? `${f.subject.trim()}${stage ? ` — ${stage.short}` : ""}` : "";
 
   const save = async () => {
-    if (f.name.trim().length < 2) return toast("اسم المجموعة مطلوب", "error");
+    const name = f.name.trim() || suggested;
+    if (name.length < 2) return toast("اسم المجموعة مطلوب", "error");
     for (const s of slots) if (!s.start || !s.end || s.end <= s.start) return toast("تأكد من أن وقت النهاية بعد وقت البداية في كل موعد", "error");
     setBusy(true);
     const teacher = perms.isTeacher ? profile!.id : f.teacher_id || null;
     const ok = await run(async () => {
       if (cls) {
         await classApi.update(cls.id, {
-          name: f.name.trim(), grade: f.grade.trim(), subject: f.subject.trim() || null, room: f.room.trim() || null,
+          name, grade: f.grade.trim(), subject: f.subject.trim() || null, room: f.room.trim() || null,
           monthly_fee: Number(f.monthly_fee) || 0, whatsapp_group_url: f.whatsapp_group_url.trim() || null,
           capacity: f.capacity ? Number(f.capacity) : null, ...(perms.isAdmin ? { teacher_id: teacher } : {}),
         });
         await classApi.setSchedule(cls.id, slots);
       } else {
-        await classApi.create({ name: f.name, grade: f.grade, subject: f.subject, room: f.room, monthly_fee: Number(f.monthly_fee) || 0, whatsapp_group_url: f.whatsapp_group_url, capacity: f.capacity ? Number(f.capacity) : null, teacher_id: teacher, slots });
+        await classApi.create({ name, grade: f.grade, subject: f.subject, room: f.room, monthly_fee: Number(f.monthly_fee) || 0, whatsapp_group_url: f.whatsapp_group_url, capacity: f.capacity ? Number(f.capacity) : null, teacher_id: teacher, slots });
       }
       return true;
     }, cls ? "تم حفظ المجموعة" : "تمت إضافة المجموعة");
@@ -167,10 +177,14 @@ function ClassForm({ cls, onClose, onDone }: { cls: ClassRow | null; onClose(): 
 
   return (
     <Modal open onClose={onClose} title={cls ? "تعديل المجموعة" : "مجموعة جديدة"} wide footer={<><Button variant="ghost" onClick={onClose}>إلغاء</Button><Button loading={busy} onClick={save}>حفظ</Button></>}>
+      <div className="mb-4 space-y-4">
+        <StagePicker value={f.grade} onChange={(grade) => setF((p) => ({ ...p, grade, subject: findSubject(parseStage(grade), p.subject)?.name ?? "" }))} />
+        <SubjectPicker key={stage?.id ?? "free"} stage={stage} value={f.subject} onChange={(subject) => setF((p) => ({ ...p, subject }))} />
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="اسم المجموعة *"><Input value={f.name} onChange={set("name")} placeholder="مثال: فيزياء 3ث - السبت" /></Field>
-        <Field label="الصف الدراسي"><Input value={f.grade} onChange={set("grade")} /></Field>
-        <Field label="المادة"><Input value={f.subject} onChange={set("subject")} /></Field>
+        <Field label="اسم المجموعة *" hint={suggested && !f.name.trim() ? `اقتراح: ${suggested}` : undefined}>
+          <Input value={f.name} onChange={set("name")} placeholder={suggested || "مثال: فيزياء 3ث - السبت"} onFocus={() => { if (!f.name.trim() && suggested) setF((p) => ({ ...p, name: suggested })); }} />
+        </Field>
         <Field label="القاعة"><Input value={f.room} onChange={set("room")} /></Field>
         <Field label="الرسوم الشهرية"><Input type="number" min={0} value={f.monthly_fee} onChange={set("monthly_fee")} /></Field>
         <Field label="السعة (اختياري)"><Input type="number" min={1} value={f.capacity} onChange={set("capacity")} /></Field>

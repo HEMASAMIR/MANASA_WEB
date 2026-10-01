@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   ArrowLeft, BookOpen, Clock, Home, LayoutDashboard, LogIn, Mail, Menu, MessageCircle, Moon, Phone, PlayCircle, Sparkles, Sun, User,
-  Users, X, Layers, ShieldCheck, Info,
+  Users, X, Layers, ShieldCheck, Info, GraduationCap,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/lib/theme";
@@ -14,12 +14,14 @@ import { APP_NAME } from "@/lib/supabase";
 import { homeFor } from "@/lib/types";
 import { Fmt, argbToHex, colorFor } from "@/lib/fmt";
 import type { CatalogCourse } from "@/lib/catalog";
+import { parseStage, subjectTracks } from "@/lib/curriculum";
 import { LogoMark } from "@/components/logo";
 import { cx } from "./ui";
 
-const NAV = [
+const NAV: { label: string; href: string; icon: typeof Home; bar?: string; text?: string; tile: string; highlighted?: boolean; badge?: string }[] = [
   { label: "الرئيسية", href: "/", icon: Home, bar: "bg-teal-500", text: "text-teal-600", tile: "bg-teal-50 text-teal-600" },
   { label: "الكورسات", href: "/courses", icon: Sparkles, highlighted: true, tile: "bg-amber-50 text-amber-600" },
+  { label: "البكالوريا", href: "/baccalaureate", icon: GraduationCap, bar: "bg-rose-500", text: "text-rose-600", tile: "bg-rose-50 text-rose-600", badge: "جديد" },
   { label: "المميزات", href: "/#features", icon: Layers, bar: "bg-amber-500", text: "text-amber-600", tile: "bg-amber-50 text-amber-600" },
   { label: "البوابات", href: "/#portals", icon: Users, bar: "bg-emerald-500", text: "text-emerald-600", tile: "bg-emerald-50 text-emerald-600" },
   { label: "الأمان", href: "/#security", icon: ShieldCheck, bar: "bg-violet-500", text: "text-violet-600", tile: "bg-violet-50 text-violet-600" },
@@ -67,10 +69,11 @@ export function SiteHeader() {
                 </Link>
               );
             }
-            const active = l.href === "/" ? pathname === "/" : false;
+            const active = !l.href.includes("#") && pathname === l.href;
             return (
               <a key={l.href} href={l.href} className={cx("group relative px-2.5 py-2 text-[13px] font-bold whitespace-nowrap transition-colors xl:px-3", active ? l.text : "text-slate-600 hover:text-navy dark:text-muted dark:hover:text-white")}>
                 {l.label}
+                {l.badge && <span className="absolute -top-1.5 end-0 rounded-full bg-rose-500 px-1.5 py-px text-[9px] leading-tight font-black text-white shadow-sm shadow-rose-500/40">{l.badge}</span>}
                 <span className={cx("absolute inset-x-3 bottom-0 h-[3px] origin-center rounded-full transition-transform duration-300", l.bar, active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100")} />
               </a>
             );
@@ -105,6 +108,7 @@ export function SiteHeader() {
             <a key={l.href} href={l.href} onClick={() => setOpen(false)} className={cx("flex items-center gap-2.5 rounded-2xl border p-3 transition-colors", l.highlighted ? "col-span-2 border-navy bg-navy text-white" : "border-slate-200/70 bg-slate-50 text-navy dark:border-line dark:bg-surface-2 dark:text-white")}>
               <span className={cx("grid size-9 shrink-0 place-items-center rounded-xl", l.highlighted ? "bg-white/10 text-amber-300" : l.tile)}><l.icon className="size-4" /></span>
               <span className="text-sm font-black">{l.label}</span>
+              {l.badge && <span className="ms-auto rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-black text-white">{l.badge}</span>}
             </a>
           ))}
           {!profile && (
@@ -135,6 +139,7 @@ export function SiteFooter({ phone }: { phone?: string | null }) {
           <h4 className="mb-4 font-black text-amber-300">روابط سريعة</h4>
           <ul className="space-y-2.5 text-slate-300">
             <li><Link href="/courses" className="hover:text-white">الكورسات</Link></li>
+            <li><Link href="/baccalaureate" className="hover:text-white">دليل البكالوريا والثانوية العامة</Link></li>
             <li><Link href="/#features" className="hover:text-white">المميزات</Link></li>
             <li><Link href="/login" className="hover:text-white">تسجيل الدخول</Link></li>
             <li><Link href="/register" className="hover:text-white">حساب ولي أمر / طالب</Link></li>
@@ -185,7 +190,7 @@ export function CourseCard({ c, currency = "ج.م" }: { c: CatalogCourse; curren
           <span className="absolute -bottom-12 start-10 size-28 rounded-full bg-black/10 transition-transform duration-700 group-hover:scale-110" />
           <div className="relative flex h-full items-end justify-between p-5 text-white">
             <div>
-              <span className="mb-1 block text-[11px] font-black tracking-wide text-white/85">{c.grade || c.class_name}</span>
+              <span className="relative z-10 mb-2 block w-fit rounded-full bg-black/15 px-2.5 py-0.5 text-[11px] font-black tracking-wide text-white backdrop-blur-sm">{parseStage(c.grade)?.short ?? (c.grade || c.class_name)}</span>
               <span className="float-mid block text-6xl leading-none drop-shadow-[0_6px_16px_rgba(0,0,0,0.18)] transition-transform duration-500 group-hover:scale-110">{c.icon || "📚"}</span>
             </div>
             <span className="grid size-12 place-items-center rounded-2xl border border-white/30 bg-white/20 backdrop-blur transition-transform duration-500 group-hover:rotate-12"><PlayCircle className="size-6" /></span>
@@ -196,6 +201,13 @@ export function CourseCard({ c, currency = "ج.م" }: { c: CatalogCourse; curren
           <Link href={`/courses/${c.id}`}><h3 className="text-xl font-black leading-snug text-navy dark:text-white">{c.title}</h3></Link>
           <span className="mt-3 block h-1 w-10 rounded-full transition-all duration-500 group-hover:w-20" style={{ background: color }} />
           {c.teacher && <p className="mt-2 text-xs font-bold" style={{ color }}>{c.teacher}</p>}
+          {subjectTracks(parseStage(c.grade), c.subject).length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {subjectTracks(parseStage(c.grade), c.subject).map((t) => (
+                <span key={t.id} className="rounded-full px-2 py-0.5 text-[10px] font-black" style={{ color: t.color, background: `${t.color}1a` }}>{t.emoji} {t.name}</span>
+              ))}
+            </div>
+          )}
           {c.description && <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-600 dark:text-muted">{c.description}</p>}
           <ul className="mt-4 space-y-2 text-xs font-semibold text-slate-700 dark:text-ink/80">
             <li className="flex items-center gap-2"><BookOpen className="size-4" style={{ color }} /> {c.lessons.length} درس</li>

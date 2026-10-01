@@ -2,6 +2,8 @@
  * Realistic sample data for the in-browser demo backend.
  * Deterministic (seeded random) so every visitor sees the same center.
  */
+import { classFitsStudent, parseStage, studentGradeText } from "../curriculum";
+
 export type Row = Record<string, unknown>;
 export type DB = Record<string, Row[]>;
 
@@ -44,40 +46,69 @@ const PARENTS = ["محمد", "أحمد", "محمود", "خالد", "طارق", "
 
 const VIDEO = "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
 
+const BAC1 = "الصف الأول الثانوي — بكالوريا";
+const BAC2 = "الصف الثاني الثانوي — بكالوريا";
+const TA3 = "الصف الثالث الثانوي — ثانوية عامة";
+
+/** Groups of the demo center. The first two are the demo student's main courses (progress + quizzes). */
 const COURSES = [
-  { subject: "فيزياء", icon: "⚛️", color: 0xff0d9488, title: "الفيزياء — الثالث الثانوي", desc: "شرح كامل للمنهج مع حل أسئلة الامتحانات السابقة وملخصات لكل فصل.", grade: "الثالث الثانوي", cls: "فيزياء 3ث — السبت", fee: 350, days: [6, 2], start: "16:00", end: "17:30", room: "قاعة 1",
+  { subject: "الفيزياء", icon: "⚛️", color: 0xff0d9488, title: "الفيزياء — 2 بكالوريا", desc: "مادة التخصص لمسار الطب وعلوم الحياة: شرح مبسط وتجارب مصورة وأسئلة بنظام البكالوريا.", grade: BAC2, cls: "فيزياء 2 بكالوريا — السبت", fee: 300, days: [6, 2], start: "16:00", end: "17:30", room: "قاعة 1",
     teacher: { name: "أ. محمد عبد الله", email: "teacher@manara.demo" },
-    lessons: [["مقدمة: التيار الكهربي وقانون أوم", 42], ["توصيل المقاومات على التوالي والتوازي", 55], ["قانونا كيرشوف", 48], ["التأثير المغناطيسي للتيار", 51], ["الحث الكهرومغناطيسي", 60], ["دوائر التيار المتردد", 58]] },
-  { subject: "كيمياء", icon: "🧪", color: 0xff0ea5e9, title: "الكيمياء — الثالث الثانوي", desc: "تأسيس قوي في الكيمياء العضوية والتحليلية مع تجارب مصورة.", grade: "الثالث الثانوي", cls: "كيمياء 3ث — الأحد", fee: 320, days: [0, 3], start: "17:00", end: "18:30", room: "قاعة 2",
-    teacher: { name: "أ. سارة حسن", email: "sara@manara.demo" },
-    lessons: [["العناصر الانتقالية", 45], ["التحليل الكيميائي", 50], ["الاتزان الكيميائي", 47], ["الكيمياء الكهربية", 53], ["الكيمياء العضوية: الهيدروكربونات", 62]] },
-  { subject: "رياضيات", icon: "📐", color: 0xfff59e0b, title: "الرياضيات البحتة", desc: "التفاضل والتكامل خطوة بخطوة مع تدريبات تفاعلية بعد كل درس.", grade: "الثالث الثانوي", cls: "رياضيات 3ث — الإثنين", fee: 300, days: [1, 4], start: "15:00", end: "16:30", room: "قاعة 3",
-    teacher: { name: "أ. أحمد سمير", email: "ahmed@manara.demo" },
-    lessons: [["النهايات والاتصال", 40], ["قواعد الاشتقاق", 52], ["تطبيقات التفاضل", 49], ["التكامل المحدود", 56]] },
-  { subject: "لغة إنجليزية", icon: "🗣️", color: 0xffe11d48, title: "English — Grammar & Writing", desc: "قواعد اللغة الإنجليزية والكتابة الإبداعية مع تدريب على الترجمة.", grade: "الثاني الثانوي", cls: "إنجليزي 2ث — الثلاثاء", fee: 250, days: [2, 5], start: "18:00", end: "19:30", room: "قاعة 1",
+    lessons: [["الكميات الفيزيائية والقياس", 40], ["الحركة في خط مستقيم", 48], ["قوانين نيوتن للحركة", 55], ["الشغل والطاقة", 50], ["كمية الحركة والتصادمات", 52], ["الحركة الدائرية", 46]] },
+  { subject: "اللغة العربية", icon: "📖", color: 0xff8b5cf6, title: "اللغة العربية — 2 بكالوريا", desc: "النحو والبلاغة والقراءة والتعبير بأسلوب ممتع وخرائط ذهنية — مادة أساسية لكل المسارات.", grade: BAC2, cls: "عربي 2 بكالوريا — الأحد", fee: 260, days: [0, 3], start: "17:00", end: "18:30", room: "قاعة 2",
+    teacher: { name: "أ. منى إبراهيم", email: "mona@manara.demo" },
+    lessons: [["المرفوعات من الأسماء", 38], ["أسلوب الشرط", 43], ["التشبيه والاستعارة", 39], ["قراءة متحررة: نصوص مختارة", 45], ["التعبير الوظيفي والإبداعي", 40]] },
+  { subject: "التاريخ", icon: "🏛️", color: 0xffb45309, title: "التاريخ — 2 بكالوريا", desc: "تاريخ مصر من الحضارة القديمة للعصر الحديث بالخرائط والقصص — مادة أساسية لكل المسارات.", grade: BAC2, cls: "تاريخ 2 بكالوريا — الإثنين", fee: 220, days: [1], start: "15:00", end: "16:30", room: "قاعة 3",
+    teacher: { name: "أ. حسام فؤاد", email: "hossam@manara.demo" },
+    lessons: [["مصر القديمة: الحضارة والدولة", 44], ["مصر في العصرين البطلمي والروماني", 41], ["مصر في العصر الإسلامي", 46], ["مصر في العصر الحديث", 50]] },
+  { subject: "اللغة الأجنبية الأولى", icon: "🗣️", color: 0xffe11d48, title: "اللغة الإنجليزية — 2 بكالوريا", desc: "قواعد اللغة الإنجليزية والكتابة والترجمة — مادة أساسية لكل المسارات.", grade: BAC2, cls: "إنجليزي 2 بكالوريا — الثلاثاء", fee: 250, days: [2, 5], start: "18:00", end: "19:30", room: "قاعة 1",
     teacher: { name: "Mr. Omar Adel", email: "omar@manara.demo" },
     lessons: [["Tenses review", 38], ["Conditionals", 44], ["Passive voice", 41], ["Essay writing", 50], ["Translation skills", 46]] },
-  { subject: "لغة عربية", icon: "📖", color: 0xff8b5cf6, title: "اللغة العربية — النحو والبلاغة", desc: "تبسيط النحو والبلاغة والأدب بأسلوب ممتع وخرائط ذهنية.", grade: "الثالث الثانوي", cls: "عربي 3ث — الأربعاء", fee: 280, days: [3, 6], start: "14:00", end: "15:30", room: "قاعة 4",
-    teacher: { name: "أ. منى إبراهيم", email: "mona@manara.demo" },
-    lessons: [["الإعراب التقديري", 35], ["أسلوب الشرط", 43], ["التشبيه والاستعارة", 39], ["الأدب في العصر الحديث", 48]] },
-  { subject: "أحياء", icon: "🔬", color: 0xff10b981, title: "الأحياء", desc: "الدعامة والحركة والتكاثر والوراثة بالرسوم التوضيحية.", grade: "الثالث الثانوي", cls: "أحياء 3ث — الخميس", fee: 300, days: [4, 0], start: "16:30", end: "18:00", room: "قاعة 2",
+  { subject: "البرمجة والذكاء الاصطناعي", icon: "💻", color: 0xff6366f1, title: "البرمجة والذكاء الاصطناعي — 2 بكالوريا", desc: "مادة التخصص لمسار الهندسة وعلوم الحاسب: بايثون من الصفر ومدخل للذكاء الاصطناعي.", grade: BAC2, cls: "برمجة 2 بكالوريا — الأربعاء", fee: 320, days: [3], start: "16:00", end: "17:30", room: "معمل الحاسب",
+    teacher: { name: "م. كريم ناصر", email: "karim@manara.demo" },
+    lessons: [["مقدمة في التفكير الحاسوبي", 35], ["أساسيات بايثون", 50], ["الشروط والتكرار", 48], ["الدوال والقوائم", 52], ["مدخل إلى الذكاء الاصطناعي", 45]] },
+  { subject: "المحاسبة", icon: "🧮", color: 0xffca8a04, title: "المحاسبة — 2 بكالوريا", desc: "مادة التخصص لمسار الأعمال: المفاهيم المحاسبية والقيود والقوائم خطوة بخطوة.", grade: BAC2, cls: "محاسبة 2 بكالوريا — الخميس", fee: 260, days: [4], start: "15:00", end: "16:30", room: "قاعة 4",
+    teacher: { name: "أ. نهى عادل", email: "noha@manara.demo" },
+    lessons: [["مفاهيم محاسبية أساسية", 40], ["المعادلة المحاسبية", 42], ["القيد المزدوج ودفتر اليومية", 50], ["ميزان المراجعة", 47]] },
+  { subject: "علم النفس", icon: "🧠", color: 0xffdb2777, title: "علم النفس — 2 بكالوريا", desc: "مادة التخصص لمسار الآداب والفنون: افهم نفسك والناس من حولك بأمثلة من الحياة.", grade: BAC2, cls: "علم نفس 2 بكالوريا — السبت", fee: 220, days: [6], start: "13:00", end: "14:30", room: "قاعة 4",
+    teacher: { name: "د. ريهام سعيد", email: "reham@manara.demo" },
+    lessons: [["ما هو علم النفس؟", 36], ["الإحساس والإدراك", 42], ["الذاكرة والنسيان", 45], ["الدافعية والانفعالات", 44]] },
+  { subject: "العلوم المتكاملة", icon: "🔬", color: 0xff10b981, title: "العلوم المتكاملة — 1 بكالوريا", desc: "فيزياء وكيمياء وأحياء وعلوم أرض في مادة واحدة مترابطة — تأسيس قوي قبل اختيار المسار.", grade: BAC1, cls: "علوم متكاملة 1 بكالوريا — الأحد", fee: 240, days: [0], start: "14:00", end: "15:30", room: "قاعة 3",
+    teacher: { name: "أ. إيمان سامي", email: "eman@manara.demo" },
+    lessons: [["المادة وخصائصها", 40], ["الطاقة وتحولاتها", 45], ["الخلية وحدة بناء الكائن الحي", 48], ["الأرض والبيئة", 42]] },
+  { subject: "الفيزياء", icon: "⚛️", color: 0xff0f766e, title: "الفيزياء — 3 ثانوية عامة", desc: "شرح كامل للمنهج مع حل أسئلة الامتحانات السابقة وملخصات لكل فصل.", grade: TA3, cls: "فيزياء 3ث — الإثنين", fee: 350, days: [1, 4], start: "17:00", end: "18:30", room: "قاعة 1",
+    teacher: { name: "أ. طارق رشدي", email: "tarek@manara.demo" },
+    lessons: [["مقدمة: التيار الكهربي وقانون أوم", 42], ["توصيل المقاومات على التوالي والتوازي", 55], ["قانونا كيرشوف", 48], ["التأثير المغناطيسي للتيار", 51], ["الحث الكهرومغناطيسي", 60], ["دوائر التيار المتردد", 58]] },
+  { subject: "الكيمياء", icon: "🧪", color: 0xff0ea5e9, title: "الكيمياء — 3 ثانوية عامة", desc: "تأسيس قوي في الكيمياء العضوية والتحليلية مع تجارب مصورة.", grade: TA3, cls: "كيمياء 3ث — الثلاثاء", fee: 320, days: [2, 6], start: "15:00", end: "16:30", room: "قاعة 2",
+    teacher: { name: "أ. سارة حسن", email: "sara@manara.demo" },
+    lessons: [["العناصر الانتقالية", 45], ["التحليل الكيميائي", 50], ["الاتزان الكيميائي", 47], ["الكيمياء الكهربية", 53], ["الكيمياء العضوية: الهيدروكربونات", 62]] },
+  { subject: "الرياضيات", icon: "📐", color: 0xfff59e0b, title: "الرياضيات البحتة — 3 ثانوية عامة", desc: "التفاضل والتكامل خطوة بخطوة مع تدريبات تفاعلية بعد كل درس.", grade: TA3, cls: "رياضيات 3ث — الأربعاء", fee: 300, days: [3, 0], start: "18:00", end: "19:30", room: "قاعة 3",
+    teacher: { name: "أ. أحمد سمير", email: "ahmed@manara.demo" },
+    lessons: [["النهايات والاتصال", 40], ["قواعد الاشتقاق", 52], ["تطبيقات التفاضل", 49], ["التكامل المحدود", 56]] },
+  { subject: "الأحياء", icon: "🧬", color: 0xff16a34a, title: "الأحياء — 3 ثانوية عامة", desc: "الدعامة والحركة والتكاثر والوراثة بالرسوم التوضيحية.", grade: TA3, cls: "أحياء 3ث — الخميس", fee: 300, days: [4, 0], start: "16:30", end: "18:00", room: "قاعة 2",
     teacher: { name: "د. هبة مصطفى", email: "heba@manara.demo" },
     lessons: [["الدعامة في الكائنات الحية", 44], ["الحركة", 40], ["التكاثر", 52], ["الوراثة الجزيئية", 58]] },
 ] as const;
 
+/** Students cycle through these [grade, track] plans — every Baccalaureate track and Thanaweya Amma section appears. */
+const STUDENT_PLANS: [string, string | null][] = [
+  [BAC2, "الطب وعلوم الحياة"], [BAC2, "الهندسة وعلوم الحاسب"], [BAC2, "الأعمال"], [BAC2, "الآداب والفنون"],
+  [TA3, "علمي علوم"], [TA3, "علمي رياضة"], [BAC2, "الطب وعلوم الحياة"], [BAC1, null], [TA3, "علمي علوم"],
+];
+
 const QUIZ_BANK: Record<string, [string, string[], number][]> = {
-  "فيزياء": [
-    ["وحدة قياس شدة التيار الكهربي هي:", ["الفولت", "الأمبير", "الأوم", "الوات"], 1],
-    ["عند توصيل مقاومتين على التوالي فإن المقاومة المكافئة:", ["تقل", "تزداد", "لا تتغير", "تساوي صفر"], 1],
-    ["قانون أوم ينص على أن V = I × R", ["صح", "خطأ"], 0],
-    ["مجموع التيارات الداخلة لنقطة يساوي مجموع الخارجة منها (قانون كيرشوف الأول)", ["صح", "خطأ"], 0],
-    ["الجهاز المستخدم لقياس فرق الجهد هو:", ["الأميتر", "الفولتميتر", "الأوميتر", "الجلفانومتر"], 1],
+  "الفيزياء": [
+    ["وحدة قياس القوة في النظام الدولي هي:", ["النيوتن", "الجول", "الوات", "الباسكال"], 0],
+    ["الجسم الساكن يظل ساكناً ما لم تؤثر عليه قوة محصلة — هذا هو:", ["قانون نيوتن الأول", "قانون نيوتن الثاني", "قانون نيوتن الثالث", "قانون الجذب العام"], 0],
+    ["القوة المحصلة = الكتلة × العجلة", ["صح", "خطأ"], 0],
+    ["السرعة كمية:", ["قياسية", "متجهة", "ليس لها وحدة", "ثابتة دائماً"], 1],
+    ["طاقة الحركة تتناسب طردياً مع مربع السرعة", ["صح", "خطأ"], 0],
   ],
-  "كيمياء": [
-    ["العنصر الانتقالي الذي يستخدم في صناعة الصلب:", ["الحديد", "الصوديوم", "الكالسيوم", "الهيليوم"], 0],
-    ["الرقم الهيدروجيني pH للمحلول المتعادل يساوي:", ["1", "7", "14", "0"], 1],
-    ["الألكانات هيدروكربونات مشبعة", ["صح", "خطأ"], 0],
-    ["عند زيادة الضغط على تفاعل غازي يتجه الاتزان نحو:", ["عدد مولات أكبر", "عدد مولات أقل", "لا يتأثر", "يتوقف التفاعل"], 1],
+  "اللغة العربية": [
+    ["الفاعل في جملة (نجحَ الطالبُ المجتهدُ) هو:", ["نجح", "الطالبُ", "المجتهدُ", "لا يوجد فاعل"], 1],
+    ["(إنْ تذاكرْ تنجحْ) — أداة الشرط هي:", ["إنْ", "تذاكرْ", "تنجحْ", "لا توجد"], 0],
+    ["في قولنا (العلمُ نورٌ) تشبيه بليغ", ["صح", "خطأ"], 0],
+    ["إعراب (الكتابَ) في (قرأتُ الكتابَ):", ["فاعل مرفوع", "مفعول به منصوب", "مبتدأ مرفوع", "مضاف إليه مجرور"], 1],
   ],
 };
 
@@ -134,14 +165,14 @@ export function buildSeed(): DB {
     const endOffset = r() < 0.18 ? -Math.floor(5 + r() * 20) : Math.floor(5 + r() * 40);
     const end = new Date(); end.setDate(end.getDate() + endOffset);
     t("students").push({
-      id, student_code: `S${1001 + i}`, name: `${FIRST[i % FIRST.length]} ${pick(PARENTS)} ${last}`, grade: i % 6 === 3 ? "الثاني الثانوي" : "الثالث الثانوي",
+      id, student_code: `S${1001 + i}`, name: `${FIRST[i % FIRST.length]} ${pick(PARENTS)} ${last}`, grade: studentGradeText(parseStage(STUDENT_PLANS[i % STUDENT_PLANS.length][0]), parseStage(STUDENT_PLANS[i % STUDENT_PLANS.length][0])?.tracks.find((x) => x.name === STUDENT_PLANS[i % STUDENT_PLANS.length][1]) ?? null),
       parent_name: `${pick(PARENTS)} ${last}`, parent_phone: `01${pick(["0", "1", "2", "5"])}${Math.floor(10000000 + r() * 89999999)}`, student_phone: null, photo_url: null,
       user_id: null, status: i === 35 ? "suspended" : "active", subscription_end: isoDate(end), notes: null, created_by: adminId, created_at: iso(daysAgo(90 - i)),
     });
-    const n = 1 + Math.floor(r() * 3);
-    const set = new Set<number>();
-    while (set.size < n) set.add(Math.floor(r() * classIds.length));
-    if (i < 2) set.add(0).add(1);
+    const grade = String(t("students")[i].grade);
+    const fits = COURSES.map((c, k) => (classFitsStudent(c.grade, c.subject, grade) ? k : -1)).filter((k) => k >= 0);
+    const set = new Set<number>(i === 0 ? [0, 1, 3] : i === 1 ? [1, 4] : fits.filter(() => r() < 0.6));
+    if (!set.size && fits.length) set.add(fits[0]);
     for (const k of set) t("enrollments").push({ student_id: id, class_id: classIds[k], enrolled_at: iso(daysAgo(80)) });
   }
 
@@ -222,13 +253,13 @@ export function buildSeed(): DB {
     t("notifications").push({ id: uid(), user_id: user, title, body, type, data: {}, is_read: read, created_at: iso(daysAgo(ago, 9 + (ago % 8))) });
   for (const u of [parentUser, studentUser]) {
     note(u, "درجة جديدة: امتحان الشهر الثاني", "أحمد محمد السيد حصل على 18 من 20", "grade", 1);
-    note(u, "كويز جديد: كويز فيزياء التفاعلي", "تم إتاحة كويز جديد — المدة 15 دقيقة", "exam", 2);
-    note(u, "تغيير موعد حصة الكيمياء", "حصة الأحد القادم ستكون الساعة 6 مساءً بدلاً من 5", "announcement", 3, true);
+    note(u, "كويز جديد: كويز الفيزياء التفاعلي", "تم إتاحة كويز جديد — المدة 15 دقيقة", "exam", 2);
+    note(u, "تغيير موعد حصة العربي", "حصة الأحد القادم ستكون الساعة 6 مساءً بدلاً من 5", "announcement", 3, true);
   }
-  note(parentUser, "تأخر: أحمد محمد السيد", "تم تسجيل تأخر أحمد محمد السيد عن فيزياء 3ث — السبت", "absence", 4, true);
+  note(parentUser, "تأخر: أحمد محمد السيد", "تم تسجيل تأخر أحمد محمد السيد عن فيزياء 2 بكالوريا — السبت", "absence", 4, true);
   for (const u of [adminId, ...teacherIds, assistantId]) {
     note(u, "اجتماع المدرسين", "اجتماع شهري يوم الخميس الساعة 8 مساءً لمراجعة نتائج الطلاب", "announcement", 1);
-    note(u, "تم تحديث الجدول", "تمت إضافة مواعيد مراجعات نهائية لطلاب الثالث الثانوي", "schedule", 6, true);
+    note(u, "تم تحديث الجدول", "تمت إضافة مواعيد مراجعات لطلاب 2 بكالوريا و3 ثانوية عامة", "schedule", 6, true);
   }
 
   // Messages
@@ -237,10 +268,10 @@ export function buildSeed(): DB {
   msg(parentUser, teacherIds[0], "السلام عليكم أستاذ محمد، أحمد مستواه عامل إيه في الفيزياء؟", 3, 18);
   msg(teacherIds[0], parentUser, "وعليكم السلام، أحمد ممتاز ومن أفضل الطلاب في المجموعة، محتاج بس يركز أكتر في المسائل.", 3, 20);
   msg(parentUser, teacherIds[0], "شكراً جداً يا أستاذ، هتابع معاه إن شاء الله", 2, 12);
-  msg(studentUser, teacherIds[1], "مس سارة ممكن حضرتك تشرحي تاني جزء الاتزان الكيميائي؟", 1, 15, false);
+  msg(studentUser, teacherIds[1], "مس منى ممكن حضرتك تشرحي تاني أسلوب الشرط؟", 1, 15, false);
 
   // Announcement + audit
-  t("announcements").push({ id: uid(), title: "تغيير موعد حصة الكيمياء", body: "حصة الأحد القادم ستكون الساعة 6 مساءً", audience: "class", class_id: classIds[1], created_by: teacherIds[1], created_at: iso(daysAgo(3)) });
+  t("announcements").push({ id: uid(), title: "تغيير موعد حصة العربي", body: "حصة الأحد القادم ستكون الساعة 6 مساءً", audience: "class", class_id: classIds[1], created_by: teacherIds[1], created_at: iso(daysAgo(3)) });
   t("audit_logs").push(
     { id: 1, actor_id: adminId, action: "INSERT", entity: "students", entity_id: studentIds[30], details: {}, created_at: iso(daysAgo(2)) },
     { id: 2, actor_id: adminId, action: "UPDATE", entity: "app_settings", entity_id: "1", details: {}, created_at: iso(daysAgo(4)) },

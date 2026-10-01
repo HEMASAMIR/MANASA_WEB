@@ -5,6 +5,7 @@ import { useState } from "react";
 import { BookOpen, PlayCircle, User } from "lucide-react";
 import { usePortal } from "@/lib/student";
 import { EmptyState, PageHeader, Progress, Tabs } from "@/components/ui";
+import { StudyPlan } from "@/components/study-plan";
 
 export default function StudentCourses() {
   const { data } = usePortal();
@@ -14,6 +15,7 @@ export default function StudentCourses() {
   return (
     <>
       <PageHeader title="كورساتي" icon={BookOpen} subtitle={`${data.courses.length} كورس • ${data.completedLessons}/${data.totalLessons} درس مكتمل`} />
+      <StudyPlan grade={data.student.grade} courses={data.courses} />
       <Tabs value={tab} onChange={setTab} items={[{ value: "all", label: "الكل" }, { value: "active", label: "قيد الدراسة" }, { value: "done", label: "مكتملة" }]} />
       {list.length === 0 ? <EmptyState icon={BookOpen} message="لا توجد كورسات هنا" /> : (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">

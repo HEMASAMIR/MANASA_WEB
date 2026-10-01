@@ -5,9 +5,11 @@ import { BookOpen, Edit3, Eye, EyeOff, Lock, PlayCircle, Plus, Trash2, Unlock, V
 import { classApi, courseApi } from "@/lib/api";
 import { useAsync } from "@/lib/hooks";
 import { Fmt, PALETTE, argbToHex, hexToArgb } from "@/lib/fmt";
-import type { Course, Lesson } from "@/lib/types";
+import type { ClassRow, Course, Lesson } from "@/lib/types";
+import { STAGES, parseStage, subjectLook } from "@/lib/curriculum";
+import { CurriculumBadges } from "@/components/curriculum";
 import { ClassSelect } from "@/components/shared";
-import { Async, Badge, Button, Card, EmptyState, Field, Input, Modal, PageHeader, Switch, Textarea, cx, useUi } from "@/components/ui";
+import { Async, Badge, Button, Card, Chips, EmptyState, Field, Input, Modal, PageHeader, Switch, Textarea, cx, useUi } from "@/components/ui";
 
 export default function CoursesPage() {
   const classes = useAsync(() => classApi.list(), []);
@@ -15,14 +17,23 @@ export default function CoursesPage() {
   const state = useAsync(() => courseApi.list(classId ?? undefined), [classId]);
   const [editing, setEditing] = useState<Course | "new" | null>(null);
   const [open, setOpen] = useState<Course | null>(null);
+  const [stageF, setStageF] = useState("all");
   const { run, confirm } = useUi();
+  const classOf = (id: string) => classes.data?.find((x) => x.id === id);
+  const stagesHere = STAGES.filter((s) => classes.data?.some((c) => parseStage(c.grade)?.id === s.id));
 
   return (
     <>
       <PageHeader title="الكورسات والدروس" icon={BookOpen} subtitle="محتوى مرئي منظم يظهر للطلاب في بوابتهم" actions={<Button icon={Plus} onClick={() => setEditing("new")} disabled={!classes.data?.length}>كورس جديد</Button>} />
-      <Card className="mb-5 max-w-md"><Field label="المجموعة"><ClassSelect classes={classes.data ?? []} value={classId} onChange={setClassId} allLabel="كل المجموعات" /></Field></Card>
+      <Card className="mb-5 space-y-4">
+        <Field label="المجموعة" className="max-w-md"><ClassSelect classes={classes.data ?? []} value={classId} onChange={setClassId} allLabel="كل المجموعات" /></Field>
+        {stagesHere.length > 0 && !classId && <Chips value={stageF} onChange={setStageF} items={[{ value: "all", label: "كل الصفوف" }, ...stagesHere.map((s) => ({ value: s.id, label: s.short }))]} />}
+      </Card>
       <Async state={state} empty={(l) => l.length === 0} emptyMessage="لا توجد كورسات بعد" emptyIcon={BookOpen}>
-        {(list) => (
+        {(all) => {
+          const list = all.filter((c) => classId || stageF === "all" || parseStage(classOf(c.class_id)?.grade)?.id === stageF);
+          if (!list.length) return <EmptyState icon={BookOpen} message="لا توجد كورسات في هذا الصف بعد" />;
+          return (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {list.map((c) => {
               const color = argbToHex(c.color);
@@ -38,6 +49,7 @@ export default function CoursesPage() {
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted">
                       <span>{c.classes?.name}</span> • <span className="flex items-center gap-1"><PlayCircle className="size-4" />{count} درس</span>
                     </div>
+                    <div className="mt-2 flex flex-wrap gap-1"><CurriculumBadges grade={classOf(c.class_id)?.grade} subject={classOf(c.class_id)?.subject} size="xs" /></div>
                     {c.description && <p className="mt-2 line-clamp-2 text-sm text-ink/70">{c.description}</p>}
                     <div className="mt-4 flex gap-1.5 border-t border-line pt-3">
                       <Button size="sm" variant="secondary" icon={Video} onClick={() => setOpen(c)}>الدروس</Button>
@@ -53,7 +65,8 @@ export default function CoursesPage() {
               );
             })}
           </div>
-        )}
+          );
+        }}
       </Async>
       {editing && <CourseForm course={editing === "new" ? null : editing} classes={classes.data ?? []} defaultClass={classId} onClose={() => setEditing(null)} onDone={state.reload} />}
       {open && <LessonsModal course={open} onClose={() => { setOpen(null); state.reload(); }} />}
@@ -61,15 +74,31 @@ export default function CoursesPage() {
   );
 }
 
-const ICONS = ["📚", "🧪", "📐", "🧮", "🌍", "📖", "✍️", "🔬", "💻", "🎨", "🗣️", "⚛️"];
+const ICONS = ["📚", "🧪", "📐", "🧮", "🌍", "📖", "✍️", "🔬", "💻", "🎨", "🗣️", "⚛️", "🧬", "🏛️", "💭", "🧠", "💼", "🌐", "📊", "📈"];
 
-function CourseForm({ course, classes, defaultClass, onClose, onDone }: { course: Course | null; classes: { id: string; name: string }[]; defaultClass: string | null; onClose(): void; onDone(): void }) {
+function CourseForm({ course, classes, defaultClass, onClose, onDone }: { course: Course | null; classes: ClassRow[]; defaultClass: string | null; onClose(): void; onDone(): void }) {
   const { run, toast } = useUi();
-  const [title, setTitle] = useState(course?.title ?? "");
+  const first = course ? null : classes.find((x) => x.id === (defaultClass ?? classes[0]?.id));
+  const firstLook = first?.subject ? subjectLook(parseStage(first.grade), first.subject) : null;
+  const [title, setTitle] = useState(course?.title ?? (first?.subject ? `${first.subject} — ${parseStage(first.grade)?.short ?? first.grade}` : ""));
   const [desc, setDesc] = useState(course?.description ?? "");
-  const [icon, setIcon] = useState(course?.icon ?? "📚");
-  const [color, setColor] = useState(course ? argbToHex(course.color) : PALETTE[0]);
-  const [classId, setClassId] = useState<string | null>(course?.class_id ?? defaultClass ?? classes[0]?.id ?? null);
+  const [icon, setIcon] = useState(course?.icon ?? firstLook?.emoji ?? "📚");
+  const [color, setColor] = useState(course ? argbToHex(course.color) : firstLook?.color ?? PALETTE[0]);
+  const [classId, setClassIdRaw] = useState<string | null>(course?.class_id ?? defaultClass ?? classes[0]?.id ?? null);
+  const cls = classes.find((x) => x.id === classId);
+  const stage = parseStage(cls?.grade);
+  /** New course: follow the group's subject for the title, icon and colour until the teacher edits them. */
+  const setClassId = (id: string | null) => {
+    setClassIdRaw(id);
+    const c = classes.find((x) => x.id === id);
+    if (course || !c?.subject) return;
+    const st = parseStage(c.grade);
+    const look = subjectLook(st, c.subject);
+    setTitle((t) => (!t.trim() || t === autoTitle ? `${c.subject} — ${st?.short ?? c.grade}` : t));
+    setIcon(look.emoji);
+    if (look.color) setColor(look.color);
+  };
+  const autoTitle = cls?.subject ? `${cls.subject} — ${stage?.short ?? cls.grade}` : "";
   const [busy, setBusy] = useState(false);
   const save = async () => {
     if (!title.trim()) return toast("العنوان مطلوب", "error");
@@ -87,7 +116,12 @@ function CourseForm({ course, classes, defaultClass, onClose, onDone }: { course
     <Modal open onClose={onClose} title={course ? "تعديل الكورس" : "كورس جديد"} footer={<><Button variant="ghost" onClick={onClose}>إلغاء</Button><Button loading={busy} onClick={save}>حفظ</Button></>}>
       <div className="space-y-4">
         <Field label="العنوان"><Input value={title} onChange={(e) => setTitle(e.target.value)} /></Field>
-        {!course && <Field label="المجموعة"><ClassSelect classes={classes} value={classId} onChange={setClassId} /></Field>}
+        {!course && (
+          <Field label="المجموعة">
+            <ClassSelect classes={classes} value={classId} onChange={setClassId} />
+            {cls && <div className="mt-2 flex flex-wrap gap-1"><CurriculumBadges grade={cls.grade} subject={cls.subject} size="xs" /></div>}
+          </Field>
+        )}
         <Field label="الوصف"><Textarea value={desc} onChange={(e) => setDesc(e.target.value)} /></Field>
         <div>
           <div className="mb-2 text-[13px] font-bold">الأيقونة</div>

@@ -12,6 +12,8 @@ import { useAsync } from "@/lib/hooks";
 import { Fmt, parseDate, whatsappLink } from "@/lib/fmt";
 import { PAYMENT_KIND_LABEL, PAYMENT_METHOD_LABEL, STATUS_LABEL, STATUS_TONE, type StudentSummary } from "@/lib/types";
 import { ClassSelect } from "@/components/shared";
+import { StudentGradePicker } from "@/components/curriculum";
+import { classFitsStudent, parseStage, studentGradeShort } from "@/lib/curriculum";
 import {
   Async, Avatar, Badge, Button, Card, Field, Input, Modal, Ring, Select, StatCard, TONE_HEX, Table, Tabs, Textarea, cx, useUi,
 } from "@/components/ui";
@@ -53,7 +55,7 @@ export default function StudentDetail() {
                   <h1 className="text-3xl font-black">{st.name}</h1>
                   <div className="mt-2 flex flex-wrap gap-2 text-sm">
                     <span className="rounded-full bg-white/18 px-3 py-1 font-bold" dir="ltr">{st.student_code}</span>
-                    {st.grade && <span className="rounded-full bg-white/18 px-3 py-1">{st.grade}</span>}
+                    {st.grade && <span className="rounded-full bg-white/18 px-3 py-1">{studentGradeShort(st.grade)}</span>}
                     <span className="rounded-full bg-white/18 px-3 py-1">{classNames(s)}</span>
                     <span className={cx("rounded-full px-3 py-1 font-bold", st.status === "active" ? "bg-success/30" : "bg-danger/40")}>{st.status === "active" ? "نشط" : st.status === "suspended" ? "موقوف" : "مؤرشف"}</span>
                   </div>
@@ -242,7 +244,7 @@ function EditModal({ open, onClose, s, onDone }: MP) {
     <Modal open={open} onClose={onClose} title="تعديل بيانات الطالب" wide footer={<><Button variant="ghost" onClick={onClose}>إلغاء</Button><Button loading={busy} onClick={save}>حفظ</Button></>}>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="الاسم"><Input value={f.name} onChange={set("name")} /></Field>
-        <Field label="الصف"><Input value={f.grade} onChange={set("grade")} /></Field>
+        <div className="sm:col-span-2"><StudentGradePicker value={f.grade} onChange={(grade) => setF((p) => ({ ...p, grade }))} /></div>
         <Field label="اسم ولي الأمر"><Input value={f.parent_name} onChange={set("parent_name")} /></Field>
         <Field label="موبايل ولي الأمر"><Input value={f.parent_phone} onChange={set("parent_phone")} dir="ltr" className="text-start" /></Field>
         <Field label="موبايل الطالب"><Input value={f.student_phone} onChange={set("student_phone")} dir="ltr" className="text-start" /></Field>
@@ -269,14 +271,16 @@ function ClassesModal({ open, onClose, s, onDone }: MP) {
       <Async state={classes} empty={(c) => c.length === 0} emptyMessage="لا توجد مجموعات">
         {(list) => (
           <div className="space-y-2">
-            {list.map((c) => {
+            {[...list].sort((a, b) => Number(classFitsStudent(b.grade, b.subject, s.student.grade)) - Number(classFitsStudent(a.grade, a.subject, s.student.grade))).map((c) => {
               const on = picked.includes(c.id);
               return (
                 <button key={c.id} onClick={() => setPicked(on ? picked.filter((x) => x !== c.id) : [...picked, c.id])}
                   className={cx("flex w-full items-center gap-3 rounded-2xl border p-3 text-start transition cursor-pointer", on ? "border-primary bg-primary-soft" : "border-line")}>
                   <span className={cx("grid size-6 place-items-center rounded-lg border-2 text-xs font-black", on ? "border-primary bg-primary text-white" : "border-line")}>{on && "✓"}</span>
                   <span className="flex-1 font-bold">{c.name}</span>
-                  <span className="text-sm text-muted">{c.grade}</span>
+                  {classFitsStudent(c.grade, c.subject, s.student.grade)
+                    ? <span className="text-xs font-black text-primary">✨ من مواد مساره</span>
+                    : <span className="text-sm text-muted">{parseStage(c.grade)?.short ?? c.grade}</span>}
                 </button>
               );
             })}

@@ -9,6 +9,8 @@ import type { ClassRow, Course, Exam, Lesson, NotificationRow, Student } from ".
 export interface PortalLesson extends Lesson { completed: boolean; lastPos: number }
 export interface PortalCourse {
   id: string; title: string; description: string | null; teacher: string; icon: string; color: string; className: string;
+  /** The group's subject and grade, used to place the course in the student's study plan. */
+  subject: string | null; grade: string;
   lessons: PortalLesson[]; done: number; isNew: boolean;
 }
 export interface PortalExam { exam: Exam; score: number | null; status: "upcoming" | "completed" | "missed"; daysLeft: number; subject: string; color: string }
@@ -63,6 +65,7 @@ export async function loadPortal(): Promise<PortalData | "not-linked"> {
   const now = new Date();
   const day0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const progressBy = new Map(progress.map((p) => [p.lesson_id, p]));
+  const classById = new Map(classes.map((c) => [c.id, c]));
   const gradeBy = new Map(grades.map((g) => [g.exam_id, Number(g.score)]));
   const iqBy = new Map(iq.map((q) => [q.exam_id, q]));
   const attemptsBy = new Map<string, typeof attempts>();
@@ -88,6 +91,7 @@ export async function loadPortal(): Promise<PortalData | "not-linked"> {
     return {
       id: c.id, title: c.title, description: c.description, teacher: c.user_profiles?.name ?? "", icon: c.icon || "📚",
       color: argbToHex(c.color, colorFor(c.id)), className: c.classes?.name ?? "", lessons, done,
+      subject: classById.get(c.class_id)?.subject ?? null, grade: classById.get(c.class_id)?.grade ?? "",
       isNew: now.getTime() - new Date(c.created_at).getTime() <= 14 * 86400000,
     };
   });

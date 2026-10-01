@@ -9,6 +9,8 @@ import { useAuth, useStaffPerms } from "@/lib/auth";
 import { useAsync } from "@/lib/hooks";
 import type { ClassRow, StudentSummary } from "@/lib/types";
 import { ClassSelect } from "@/components/shared";
+import { classFitsStudent } from "@/lib/curriculum";
+import { StudentBadges, StudentGradePicker } from "@/components/curriculum";
 import { Async, Avatar, Badge, Button, Card, Chips, EmptyState, Field, Input, Modal, PageHeader, cx, useUi } from "@/components/ui";
 
 type Filter = "all" | "overdue" | "absences" | "inactive";
@@ -107,6 +109,7 @@ function StudentTile({ s, i }: { s: StudentSummary; i: number }) {
         <div className="truncate text-[15.5px] font-extrabold">{s.student.name}</div>
         <div className="truncate text-sm text-muted"><span dir="ltr">{s.student.student_code}</span> • {classNames(s)}</div>
         <div className="mt-2 flex flex-wrap gap-1.5">
+          <StudentBadges grade={s.student.grade} />
           {s.student.status !== "active" && <Badge tone="neutral">{s.student.status === "suspended" ? "موقوف" : "مؤرشف"}</Badge>}
           {s.stats?.is_overdue && <Badge tone="danger">اشتراك منتهي</Badge>}
           {pct != null && <Badge tone={low ? "danger" : "success"}>حضور {Math.round(pct)}%</Badge>}
@@ -127,6 +130,7 @@ function AddStudentModal({ open, onClose, classes, onDone }: { open: boolean; on
   const [picked, setPicked] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement>) => setF({ ...f, [k]: e.target.value });
+  const fitting = classes.filter((c) => c.is_active && classFitsStudent(c.grade, c.subject, f.grade));
 
   const save = async () => {
     if (f.name.trim().length < 2) return toast("الاسم مطلوب", "error");
@@ -144,24 +148,33 @@ function AddStudentModal({ open, onClose, classes, onDone }: { open: boolean; on
 
   return (
     <Modal open={open} onClose={onClose} title="إضافة طالب" wide footer={<><Button variant="ghost" onClick={onClose}>إلغاء</Button><Button loading={busy} onClick={save}>حفظ</Button></>}>
+      <div className="mb-4 rounded-2xl border border-line bg-surface-2/50 p-4">
+        <StudentGradePicker value={f.grade} onChange={(grade) => setF((p) => ({ ...p, grade }))} />
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="اسم الطالب *"><Input value={f.name} onChange={set("name")} /></Field>
         <Field label="كود الطالب" hint="اتركه فارغاً ليتم توليده تلقائياً"><Input value={f.code} onChange={set("code")} dir="ltr" className="text-start uppercase" /></Field>
-        <Field label="الصف الدراسي"><Input value={f.grade} onChange={set("grade")} /></Field>
         <Field label="اسم ولي الأمر"><Input value={f.parent_name} onChange={set("parent_name")} /></Field>
         <Field label="موبايل ولي الأمر *"><Input value={f.parent_phone} onChange={set("parent_phone")} dir="ltr" className="text-start" /></Field>
         <Field label="موبايل الطالب"><Input value={f.student_phone} onChange={set("student_phone")} dir="ltr" className="text-start" /></Field>
       </div>
       {classes.length > 0 && (
         <div className="mt-5">
-          <div className="mb-2 text-[13px] font-bold">المجموعات</div>
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <span className="text-[13px] font-bold">المجموعات</span>
+            {fitting.length > 0 && (
+              <button type="button" onClick={() => setPicked([...new Set([...picked, ...fitting.map((c) => c.id)])])} className="rounded-full bg-primary-soft px-3 py-1 text-xs font-black text-primary cursor-pointer">
+                ✨ اختيار مجموعات مساره ({fitting.length})
+              </button>
+            )}
+          </div>
           <div className="flex flex-wrap gap-2">
-            {classes.map((c) => {
+            {[...fitting, ...classes.filter((c) => !fitting.includes(c))].map((c) => {
               const on = picked.includes(c.id);
               return (
                 <button key={c.id} type="button" onClick={() => setPicked(on ? picked.filter((x) => x !== c.id) : [...picked, c.id])}
                   className={cx("rounded-full border px-3.5 py-1.5 text-sm font-bold transition cursor-pointer", on ? "border-primary bg-primary-soft text-primary" : "border-line text-muted")}>
-                  {on ? "✓ " : ""}{c.name}
+                  {on ? "✓ " : ""}{c.name}{fitting.includes(c) && !on ? " ✨" : ""}
                 </button>
               );
             })}

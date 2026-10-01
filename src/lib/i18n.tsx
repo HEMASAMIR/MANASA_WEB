@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { EN } from "./i18n-en";
+import { EN_EDU, EN_PLATFORM } from "./i18n-en-edu";
 
 export type Lang = "ar" | "en";
 
@@ -10,7 +11,7 @@ const ATTRS = ["placeholder", "title", "aria-label", "alt"];
 
 // Dictionary helpers ----------------------------------------------------------
 const dict = new Map<string, string>();
-for (const [k, v] of Object.entries(EN)) dict.set(k.trim(), v);
+for (const [k, v] of Object.entries({ ...EN_PLATFORM, ...EN_EDU, ...EN })) dict.set(k.trim(), v);
 
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 /** Every known phrase, longest first, matched only on whole words. */
