@@ -396,3 +396,7 @@ html.i18n-pending body { visibility: hidden; }
 /* Orbiting icon badges in the hero */
 .orbit { animation: orbit 14s ease-in-out infinite; }
 @keyframes orbit { 0%, 100% { transform: translate(0, 0) rotate(-4deg); } 25% { transform: translate(10px, -14px) rotate(3deg); } 50% { transform: translate(-6px, -24px) rotate(-2deg); } 75% { transform: translate(-12px, -8px) rotate(4deg); } }
+
+/* Lighthouse beam sweeping behind the footer logo */
+.beam { position: absolute; inset: -60%; border-radius: 9999px; pointer-events: none; background: conic-gradient(from 0deg, rgba(251, 191, 36, 0.55) 0deg, rgba(251, 191, 36, 0.15) 28deg, transparent 60deg, transparent 360deg); mask-image: radial-gradient(circle, #000 20%, transparent 70%); animation: beam 7s linear infinite; }
+@keyframes beam { to { transform: rotate(360deg); } }

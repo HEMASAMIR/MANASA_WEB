@@ -5,14 +5,15 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   ArrowLeft, BookOpen, Clock, Home, LayoutDashboard, LogIn, Mail, Menu, MessageCircle, Moon, Phone, PlayCircle, Sparkles, Sun, User,
-  Users, X, Layers, ShieldCheck, Info, GraduationCap,
+  Users, X, Layers, ShieldCheck, Info, GraduationCap, ArrowUp, ChevronLeft, Smartphone, Languages,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/lib/theme";
 import { LangSwitch } from "@/lib/i18n";
 import { APP_NAME } from "@/lib/supabase";
 import { homeFor } from "@/lib/types";
-import { Fmt, argbToHex, colorFor } from "@/lib/fmt";
+import { Fmt, argbToHex, colorFor, whatsappLink } from "@/lib/fmt";
+import { TRACKS } from "@/lib/education";
 import type { CatalogCourse } from "@/lib/catalog";
 import { parseStage, subjectTracks } from "@/lib/curriculum";
 import { LogoMark } from "@/components/logo";
@@ -122,40 +123,150 @@ export function SiteHeader() {
   );
 }
 
+const FOOTER_LINKS = [
+  { href: "/courses", label: "الكورسات" },
+  { href: "/baccalaureate", label: "دليل البكالوريا والثانوية العامة" },
+  { href: "/#features", label: "المميزات" },
+  { href: "/#how", label: "إزاي بتشتغل؟" },
+  { href: "/login", label: "تسجيل الدخول" },
+  { href: "/register", label: "حساب ولي أمر / طالب" },
+];
+
 export function SiteFooter({ phone }: { phone?: string | null }) {
+  const wa = whatsappLink(phone, "مرحباً، عايز أعرف تفاصيل أكتر عن منارة");
   return (
     <footer id="contact" className="relative overflow-hidden bg-navy text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(20,184,166,0.25),transparent_55%),radial-gradient(ellipse_at_bottom_right,rgba(245,158,11,0.18),transparent_55%)]" />
+      <div className="aurora opacity-30" />
+      <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
       <BrandStripe className="relative h-1.5" />
-      <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-3" data-reveal-stagger="140">
+
+      {/* Call to action */}
+      <div className="relative mx-auto max-w-7xl px-5 pt-14">
+        <div data-reveal="zoom" className="glow-border spotlight relative flex flex-col items-center gap-8 overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.06] p-7 text-center backdrop-blur-md sm:p-10 lg:flex-row lg:text-start"
+          style={{ "--spot": "rgba(251, 191, 36, 0.12)", "--spot-size": "520px" } as React.CSSProperties}>
+          <div className="relative grid size-28 shrink-0 place-items-center">
+            <span className="beam" />
+            <LogoMark size={84} className="relative drop-shadow-[0_12px_30px_rgba(251,191,36,0.35)]" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-3xl font-black leading-tight sm:text-4xl">جاهز <span className="shimmer-text">تنوّر</span> مركزك؟</h3>
+            <p className="mt-3 max-w-xl leading-8 text-slate-300 lg:max-w-none">ابدأ مع {APP_NAME} النهارده — حضور ذكي، كورسات بالبكالوريا والثانوية العامة، كويزات، ومتابعة لحظية لكل طالب.</p>
+          </div>
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row lg:flex-col xl:flex-row">
+            <Link href="/register" className="bg-gold glow-gold shimmer-auto inline-flex items-center justify-center gap-2 rounded-2xl px-7 py-4 font-black text-navy transition hover:-translate-y-0.5">
+              ابدأ الآن مجاناً <ArrowLeft className="size-5" />
+            </Link>
+            {wa && (
+              <a href={wa} target="_blank" rel="noreferrer" className="shine inline-flex items-center justify-center gap-2 rounded-2xl bg-[#25d366] px-7 py-4 font-black text-white shadow-lg shadow-[#25d366]/25 transition hover:-translate-y-0.5">
+                <MessageCircle className="size-5" /> كلّمنا واتساب
+              </a>
+            )}
+            <Link href="/login" className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-7 py-4 font-black transition hover:bg-white/15">
+              <PlayCircle className="size-5" /> جرّب المنصة
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Columns */}
+      <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_1.15fr]" data-reveal-stagger="120">
         <div>
           <div className="flex items-center gap-3">
             <LogoMark size={52} />
-            <span className="text-2xl font-black">{APP_NAME}</span>
+            <div>
+              <span className="block text-2xl font-black">{APP_NAME}</span>
+              <span className="block text-xs font-bold text-teal-300">منصة إدارة التعليم والمتابعة الذكية</span>
+            </div>
           </div>
           <p className="mt-4 leading-7 text-slate-300">منصة متكاملة لإدارة السناتر والمدارس: حضور ذكي، كورسات ودروس، كويزات تفاعلية، ومتابعة لحظية لأولياء الأمور.</p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {[
+              { i: Smartphone, t: "ويب + موبايل" },
+              { i: ShieldCheck, t: "بيانات محمية" },
+              { i: Languages, t: "عربي / English" },
+            ].map((x) => (
+              <span key={x.t} className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.07] px-3 py-1.5 text-xs font-bold text-slate-200">
+                <x.i className="size-3.5 text-amber-300" /> {x.t}
+              </span>
+            ))}
+          </div>
         </div>
+
         <div>
-          <h4 className="mb-4 font-black text-amber-300">روابط سريعة</h4>
-          <ul className="space-y-2.5 text-slate-300">
-            <li><Link href="/courses" className="hover:text-white">الكورسات</Link></li>
-            <li><Link href="/baccalaureate" className="hover:text-white">دليل البكالوريا والثانوية العامة</Link></li>
-            <li><Link href="/#features" className="hover:text-white">المميزات</Link></li>
-            <li><Link href="/login" className="hover:text-white">تسجيل الدخول</Link></li>
-            <li><Link href="/register" className="hover:text-white">حساب ولي أمر / طالب</Link></li>
+          <FooterTitle>روابط سريعة</FooterTitle>
+          <ul className="space-y-2.5">
+            {FOOTER_LINKS.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className="group inline-flex items-center gap-1.5 text-slate-300 transition-colors hover:text-white">
+                  <ChevronLeft className="size-4 -me-1 text-amber-300 opacity-0 transition-all duration-300 group-hover:me-0 group-hover:opacity-100" />
+                  <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:0%_1px] bg-bottom-right bg-no-repeat transition-[background-size] duration-300 group-hover:bg-[length:100%_1px]">{l.label}</span>
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
+
         <div>
-          <h4 className="mb-4 font-black text-amber-300">تواصل معنا</h4>
-          <ul className="space-y-3 text-slate-300">
-            {phone && <li className="flex items-center gap-2"><Phone className="size-4 text-teal-300" /><span dir="ltr">{phone}</span></li>}
-            <li className="flex items-center gap-2"><MessageCircle className="size-4 text-teal-300" /> رسائل مباشرة من داخل المنصة</li>
-            <li className="flex items-center gap-2"><Mail className="size-4 text-teal-300" /> الدعم الفني لإدارة المركز</li>
+          <FooterTitle>مسارات البكالوريا</FooterTitle>
+          <ul className="space-y-2">
+            {TRACKS.map((t) => (
+              <li key={t.id}>
+                <Link href={`/courses?stage=bac2&track=${t.id}`} className="group flex items-center gap-3 rounded-xl p-1.5 -ms-1.5 transition-colors hover:bg-white/[0.06]">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-xl text-lg transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" style={{ background: `${t.color}33`, boxShadow: `inset 0 0 0 1px ${t.color}55` }}>{t.emoji}</span>
+                  <span className="text-sm font-bold text-slate-200 group-hover:text-white">{t.name}</span>
+                </Link>
+              </li>
+            ))}
           </ul>
+        </div>
+
+        <div>
+          <FooterTitle>تواصل معنا</FooterTitle>
+          <div className="space-y-2.5">
+            {phone && (
+              <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-3 transition hover:border-teal-300/40 hover:bg-white/[0.09]">
+                <span className="grid size-10 place-items-center rounded-xl bg-teal-400/15 text-teal-300 transition-transform group-hover:scale-110"><Phone className="size-5" /></span>
+                <span className="min-w-0"><span className="block text-[11px] font-bold text-slate-400">اتصل بنا</span><span className="block font-black" dir="ltr">{phone}</span></span>
+              </a>
+            )}
+            {wa && (
+              <a href={wa} target="_blank" rel="noreferrer" className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-3 transition hover:border-[#25d366]/50 hover:bg-white/[0.09]">
+                <span className="grid size-10 place-items-center rounded-xl bg-[#25d366]/15 text-[#25d366] transition-transform group-hover:scale-110"><MessageCircle className="size-5" /></span>
+                <span><span className="block text-[11px] font-bold text-slate-400">واتساب</span><span className="block font-black">راسلنا في أي وقت</span></span>
+              </a>
+            )}
+            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-3">
+              <span className="grid size-10 place-items-center rounded-xl bg-amber-400/15 text-amber-300"><Mail className="size-5" /></span>
+              <span><span className="block text-[11px] font-bold text-slate-400">من داخل المنصة</span><span className="block font-black">رسائل مباشرة للمدرس والإدارة</span></span>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="relative border-t border-white/10 py-5 text-center text-sm text-slate-400">© {new Date().getFullYear()} {APP_NAME} — جميع الحقوق محفوظة</div>
+
+      {/* Giant outlined name */}
+      <div aria-hidden className="pointer-events-none relative -mb-[3%] select-none overflow-hidden text-center text-[clamp(6rem,19vw,17rem)] leading-[0.85] font-black text-transparent [-webkit-text-stroke:1.5px_rgba(255,255,255,0.07)]">
+        {APP_NAME}
+      </div>
+
+      <div className="relative border-t border-white/10 bg-navy/60 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-5 text-sm text-slate-400 sm:flex-row">
+          <span>© {new Date().getFullYear()} {APP_NAME} — جميع الحقوق محفوظة</span>
+          <span className="flex items-center gap-1.5"><Sparkles className="size-4 text-amber-300" /> صُممت للسناتر والمدارس في مصر والخليج</span>
+          <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="لأعلى الصفحة"
+            className="group grid size-11 place-items-center rounded-full border border-white/15 bg-white/10 text-white transition hover:-translate-y-1 hover:bg-white/20 cursor-pointer">
+            <ArrowUp className="size-5 transition-transform group-hover:-translate-y-0.5" />
+          </button>
+        </div>
+      </div>
     </footer>
+  );
+}
+
+function FooterTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h4 className="mb-5 flex items-center gap-2 font-black text-amber-300">
+      <span className="h-4 w-1 rounded-full bg-gradient-to-b from-amber-300 to-teal-400" /> {children}
+    </h4>
   );
 }
 

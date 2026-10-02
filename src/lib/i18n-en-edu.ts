@@ -303,6 +303,33 @@ export const EN_PLATFORM: Record<string, string> = {
   "إشعارات": "Alerts",
   "تقارير": "Reports",
 
+  // Footer
+  "جاهز": "Ready to",
+  "تنوّر": "light up",
+  "مركزك؟": "your center?",
+  "ابدأ مع": "Start with",
+  "النهارده — حضور ذكي، كورسات بالبكالوريا والثانوية العامة، كويزات، ومتابعة لحظية لكل طالب.": "today — smart attendance, Baccalaureate and Thanaweya Amma courses, quizzes and live follow-up for every student.",
+  "كلّمنا واتساب": "Chat on WhatsApp",
+  "جرّب المنصة": "Try the platform",
+  "بيانات محمية": "Protected data",
+  "عربي / English": "Arabic / English",
+  "مسارات البكالوريا": "Baccalaureate tracks",
+  "اتصل بنا": "Call us",
+  "واتساب": "WhatsApp",
+  "راسلنا في أي وقت": "Message us any time",
+  "من داخل المنصة": "Inside the platform",
+  "رسائل مباشرة للمدرس والإدارة": "Direct messages to teachers and admin",
+  "صُممت للسناتر والمدارس في مصر والخليج": "Built for learning centers and schools in Egypt and the Gulf",
+  "لأعلى الصفحة": "Back to top",
+
+  // Login / register
+  "منصة واحدة لـ": "One platform for",
+  "الحضور": "attendance",
+  "المتابعة": "follow-up",
+  "درجة الكويز 19 / 20": "Quiz score 19 / 20",
+  "خطة مذاكرتك جاهزة": "Your study plan is ready",
+  "مسار الطب وعلوم الحياة": "Medicine & Life Sciences track",
+
   // Student study plan
   "حدد صفك ومسارك علشان نرتب لك خطة مذاكرتك": "Set your grade and track to get your study plan",
   "كلّم إدارة المركز تسجل صفك (بكالوريا أو ثانوية عامة) ومسارك، وهتظهر لك هنا كل مواد مسارك.": "Ask the center to record your grade (Baccalaureate or Thanaweya Amma) and track, and all your track's subjects will show up here.",
