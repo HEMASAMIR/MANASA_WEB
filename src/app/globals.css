@@ -310,3 +310,89 @@ html.i18n-pending body { visibility: hidden; }
 [data-shown] .bar-fill { animation: bar-fill 1.6s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; transform-origin: right; }
 [dir="ltr"] [data-shown] .bar-fill { transform-origin: left; }
 @keyframes bar-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* ═══════════════════════════ Landing effects ═══════════════════════════ */
+/* Slow-moving colour field behind the hero */
+.aurora {
+  position: absolute;
+  inset: -25%;
+  pointer-events: none;
+  filter: blur(70px);
+  opacity: 0.6;
+  background:
+    radial-gradient(35% 35% at 22% 28%, rgba(45, 212, 191, 0.5), transparent 62%),
+    radial-gradient(30% 30% at 78% 22%, rgba(251, 191, 36, 0.38), transparent 62%),
+    radial-gradient(40% 40% at 60% 78%, rgba(14, 165, 233, 0.3), transparent 62%),
+    radial-gradient(25% 25% at 30% 75%, rgba(139, 92, 246, 0.22), transparent 62%);
+  animation: aurora 20s ease-in-out infinite alternate;
+}
+.dark .aurora { opacity: 0.38; }
+@keyframes aurora {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50% { transform: translate(3%, -4%) rotate(10deg) scale(1.08); }
+  100% { transform: translate(-4%, 3%) rotate(-8deg) scale(0.96); }
+}
+
+/* Word that swaps in the hero headline */
+.word-in { display: inline-block; animation: word-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes word-in { from { opacity: 0; transform: translateY(55%) rotateX(-60deg); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+
+/* Endless subject ribbon */
+.marquee { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.marquee-track { display: flex; width: max-content; direction: ltr; animation: marquee 45s linear infinite; }
+.marquee-track.reverse { animation-direction: reverse; animation-duration: 55s; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* Light that follows the mouse inside a card (position set by <Motion>) */
+.spotlight { position: relative; isolation: isolate; }
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s;
+  background: radial-gradient(var(--spot-size, 380px) circle at var(--mx, 50%) var(--my, 50%), var(--spot, rgba(20, 184, 166, 0.16)), transparent 55%);
+}
+.spotlight:hover::before { opacity: 1; }
+.dark .spotlight { --spot: rgba(45, 212, 191, 0.12); }
+
+/* 3D tilt (angles set by <Motion>) */
+[data-tilt] { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); transform-style: preserve-3d; will-change: transform; }
+
+/* Rotating gradient border */
+@property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.glow-border { position: relative; }
+.glow-border::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(from var(--angle), transparent 0deg, #2dd4bf 60deg, #fbbf24 120deg, transparent 180deg, transparent 240deg, #38bdf8 300deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-angle 5s linear infinite;
+}
+@keyframes spin-angle { to { --angle: 360deg; } }
+
+/* Connector line that draws itself between the "how it works" steps */
+.line-draw { transform: scaleX(0); transform-origin: right; }
+[dir="ltr"] .line-draw { transform-origin: left; }
+[data-shown] .line-draw, .line-draw[data-shown] { animation: line-draw 1.6s 0.3s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+@keyframes line-draw { to { transform: scaleX(1); } }
+
+/* Soft ring pulse behind step numbers */
+.pulse-ring { position: relative; }
+.pulse-ring::before { content: ""; position: absolute; inset: -6px; border-radius: inherit; border: 2px solid currentColor; opacity: 0; animation: pulse-ring 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+@keyframes pulse-ring { 0% { transform: scale(0.85); opacity: 0.55; } 100% { transform: scale(1.35); opacity: 0; } }
+
+/* Orbiting icon badges in the hero */
+.orbit { animation: orbit 14s ease-in-out infinite; }
+@keyframes orbit { 0%, 100% { transform: translate(0, 0) rotate(-4deg); } 25% { transform: translate(10px, -14px) rotate(3deg); } 50% { transform: translate(-6px, -24px) rotate(-2deg); } 75% { transform: translate(-12px, -8px) rotate(4deg); } }

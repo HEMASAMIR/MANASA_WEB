@@ -117,7 +117,40 @@ export function Motion() {
     };
     if (!reduce) window.addEventListener("scroll", onScroll, { passive: true });
 
+    // Mouse spotlight (.spotlight) and 3D tilt ([data-tilt="max degrees"])
+    let tilted: HTMLElement | null = null;
+    const onPointer = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      const target = e.target as Element | null;
+      const spot = target?.closest?.<HTMLElement>(".spotlight");
+      if (spot) {
+        const r = spot.getBoundingClientRect();
+        spot.style.setProperty("--mx", `${e.clientX - r.left}px`);
+        spot.style.setProperty("--my", `${e.clientY - r.top}px`);
+      }
+      const tilt = target?.closest?.<HTMLElement>("[data-tilt]") ?? null;
+      if (tilt !== tilted) {
+        if (tilted) tilted.style.transform = "";
+        tilted = tilt;
+      }
+      if (tilt) {
+        const r = tilt.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        const max = Number(tilt.dataset.tilt) || 6;
+        tilt.style.transform = `perspective(1000px) rotateX(${(-y * max).toFixed(2)}deg) rotateY(${(x * max).toFixed(2)}deg)`;
+      }
+    };
+    const onLeave = () => { if (tilted) tilted.style.transform = ""; tilted = null; };
+    if (!reduce) {
+      document.addEventListener("pointermove", onPointer, { passive: true });
+      document.documentElement.addEventListener("pointerleave", onLeave);
+    }
+
     return () => {
+      document.removeEventListener("pointermove", onPointer);
+      document.documentElement.removeEventListener("pointerleave", onLeave);
+      onLeave();
       io.disconnect();
       // Let the next run (Strict Mode re-run, route change) observe whatever hasn't been revealed yet.
       document.querySelectorAll("[data-watched]:not([data-shown])").forEach((el) => el.removeAttribute("data-watched"));
