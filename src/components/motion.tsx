@@ -119,6 +119,8 @@ export function Motion() {
 
     return () => {
       io.disconnect();
+      // Let the next run (Strict Mode re-run, route change) observe whatever hasn't been revealed yet.
+      document.querySelectorAll("[data-watched]:not([data-shown])").forEach((el) => el.removeAttribute("data-watched"));
       mo.disconnect();
       window.removeEventListener("scroll", onScroll);
     };
