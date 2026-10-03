@@ -303,6 +303,13 @@ export const EN_PLATFORM: Record<string, string> = {
   "إشعارات": "Alerts",
   "تقارير": "Reports",
 
+  // Admin dashboard
+  "العام الدراسي 2026/2027": "School year 2026/2027",
+  "نسبة حضور اليوم": "Today's attendance rate",
+  "طلابك حسب المسار": "Your students by track",
+  "طالب بكالوريا": "Baccalaureate students",
+  "طالب نشط": "active students",
+
   // Footer
   "جاهز": "Ready to",
   "تنوّر": "light up",

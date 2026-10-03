@@ -7,7 +7,10 @@ import { classApi, reportApi, studentApi, notificationApi, classNames } from "@/
 import { useAuth, useStaffPerms } from "@/lib/auth";
 import { useAsync } from "@/lib/hooks";
 import { Fmt, parseDate, whatsappLink } from "@/lib/fmt";
-import { Async, Avatar, Badge, Card, EmptyState, IconBadge, SectionTitle, StatCard, TONE_HEX, useUi } from "@/components/ui";
+import { Async, Avatar, Badge, Card, EmptyState, IconBadge, Ring, SectionTitle, StatCard, TONE_HEX, useUi } from "@/components/ui";
+import { CountUp, LiveClock } from "@/components/fx";
+import { CurriculumBadges } from "@/components/curriculum";
+import { SYSTEMS, STAGES, parseStudentGrade } from "@/lib/curriculum";
 
 export default function Overview() {
   const { profile, settings } = useAuth();
@@ -18,30 +21,40 @@ export default function Overview() {
   const currency = settings?.currency ?? "ج.م";
 
   const state = useAsync(async () => {
-    const [stats, classes, atRisk, trend] = await Promise.all([reportApi.stats(), classApi.list(), studentApi.listAtRisk(threshold, 20), reportApi.trend(undefined, 14).catch(() => [])]);
+    const [stats, classes, atRisk, trend, grades] = await Promise.all([reportApi.stats(), classApi.list(), studentApi.listAtRisk(threshold, 20), reportApi.trend(undefined, 14).catch(() => []), studentApi.activeGrades().catch(() => [] as string[])]);
     const wd = new Date().getDay();
     const today = classes
       .filter((c) => c.class_schedule?.some((s) => s.weekday === wd))
       .map((c) => ({ c, slots: c.class_schedule!.filter((s) => s.weekday === wd).sort((a, b) => a.start_time.localeCompare(b.start_time)) }))
       .sort((a, b) => a.slots[0].start_time.localeCompare(b.slots[0].start_time));
-    return { stats, today, atRisk, trend };
+    return { stats, today, atRisk, trend, grades };
   }, [threshold]);
 
   const now = new Date();
   const hour = now.getHours();
   const greeting = hour < 12 ? "صباح الخير" : hour < 18 ? "مساء النور" : "مساء الخير";
+  const nowHm = `${String(hour).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
   return (
     <Async state={state}>
-      {({ stats: s, today, atRisk, trend }) => (
+      {({ stats: s, today, atRisk, trend, grades }) => (
         <>
           {/* Welcome banner */}
-          <div className="relative mb-6 overflow-hidden rounded-[28px] bg-hero p-6 text-white shadow-[0_20px_40px_-18px_rgba(13,148,136,0.8)] animate-in md:p-8">
+          <div className="glow-border relative mb-6 overflow-hidden rounded-[28px] bg-hero p-6 text-white shadow-[0_20px_40px_-18px_rgba(13,148,136,0.8)] animate-in md:p-8">
+            <div className="aurora opacity-50" />
+            <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "18px 18px" }} />
             <div className="absolute -top-16 -end-10 size-56 rounded-full bg-white/10" />
-            <div className="absolute -bottom-20 end-40 size-40 rounded-full bg-white/[0.06]" />
-            <div className="relative flex flex-wrap items-end justify-between gap-5">
+            <div aria-hidden className="pointer-events-none absolute inset-0 hidden xl:block">
+              {[["📚", "top-6 end-[34%]", "0s"], ["🎓", "bottom-6 end-[44%]", "-4s"], ["✨", "top-10 end-[52%]", "-8s"]].map(([e, pos, d]) => (
+                <span key={e} className={`orbit absolute grid size-11 place-items-center rounded-2xl border border-white/20 bg-white/10 text-xl backdrop-blur ${pos}`} style={{ animationDelay: d }}>{e}</span>
+              ))}
+            </div>
+            <div className="relative flex flex-wrap items-center justify-between gap-6">
               <div>
-                <div className="text-sm font-semibold text-white/80">{Fmt.weekday(now)} {Fmt.date(now)}</div>
+                <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-white/80">
+                  <span>{Fmt.weekday(now)} {Fmt.date(now)}</span>
+                  <span className="rounded-full bg-white/15 px-3 py-0.5 text-base font-black text-white"><LiveClock /></span>
+                </div>
                 <h1 className="mt-1 text-3xl font-black md:text-4xl">{greeting}، <span className="shimmer-text">{profile?.name}</span> 👋</h1>
                 <p className="mt-2 text-white/85">إليك ملخص يومك في المركز</p>
                 <div className="mt-5 flex flex-wrap gap-2">
@@ -50,11 +63,21 @@ export default function Overview() {
                   <span className="flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-3.5 py-1.5 text-sm font-bold"><UserX className="size-4" />{s.absent_today} غائب</span>
                 </div>
               </div>
-              {perms.canTakeAttendance && (
-                <Link href="/admin/attendance" className="bg-gold glow-gold shimmer-auto inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-extrabold text-navy transition hover:-translate-y-0.5">
-                  تسجيل الحضور <ArrowLeft className="size-5" />
-                </Link>
-              )}
+              <div className="flex items-center gap-5">
+                <div className="flex flex-col items-center gap-1.5">
+                  <Ring value={s.present_today + s.absent_today ? (s.present_today / (s.present_today + s.absent_today)) * 100 : 0} size={104} stroke={10} color="#fbbf24" track="rgba(255,255,255,0.15)">
+                    <div className="text-center">
+                      <div className="text-2xl font-black"><CountUp value={s.present_today + s.absent_today ? Math.round((s.present_today / (s.present_today + s.absent_today)) * 100) : 0} />%</div>
+                    </div>
+                  </Ring>
+                  <span className="text-xs font-bold text-white/80">نسبة حضور اليوم</span>
+                </div>
+                {perms.canTakeAttendance && (
+                  <Link href="/admin/attendance" className="bg-gold glow-gold shimmer-auto inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-extrabold text-navy transition hover:-translate-y-0.5">
+                    تسجيل الحضور <ArrowLeft className="size-5" />
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
 
@@ -79,15 +102,20 @@ export default function Overview() {
               { show: perms.canSeeFinance, href: "/admin/finance", icon: CreditCard, label: "المالية", c: "#0EA5E9" },
               { show: perms.canManage, href: "/admin/broadcast", icon: Megaphone, label: "إشعار جماعي", c: "#E11D48" },
             ].filter((a) => a.show).slice(0, 6).map((a) => (
-              <Link key={a.label} href={a.href} className="group relative flex flex-col items-center gap-3 overflow-hidden rounded-3xl border border-line bg-surface p-5 text-center shadow-soft transition hover:-translate-y-1 hover:border-primary/40">
+              <div key={a.label}>
+              <Link href={a.href} data-tilt="12" className="spotlight group relative flex h-full flex-col items-center gap-3 overflow-hidden rounded-3xl border border-line bg-surface p-5 text-center shadow-soft transition-[border-color,box-shadow] hover:border-primary/40 hover:shadow-[0_20px_40px_-18px_rgba(15,23,42,0.25)]"
+                style={{ "--spot": `${a.c}22` } as React.CSSProperties}>
                 <span className="absolute inset-x-0 top-0 h-1 opacity-0 transition group-hover:opacity-100" style={{ background: a.c }} />
                 <span className="wiggle grid size-14 place-items-center rounded-2xl text-white shadow-lg transition group-hover:scale-110" style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${a.c} 75%, white), ${a.c})`, boxShadow: `0 10px 22px -10px ${a.c}` }}>
                   <a.icon className="size-6" />
                 </span>
                 <span className="text-sm font-extrabold">{a.label}</span>
               </Link>
+              </div>
             ))}
           </div>
+
+          <TracksWidget grades={grades} canManage={perms.canManage} />
 
           {/* Attendance trend */}
           {trend.length > 0 && (
@@ -131,7 +159,13 @@ export default function Overview() {
                     <Card key={c.id} className="flex items-center gap-4 !p-4">
                       <IconBadge icon={Clock} color={TONE_HEX.info} size={46} />
                       <div className="min-w-0 flex-1">
-                        <div className="truncate font-extrabold">{c.name}</div>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="truncate font-extrabold">{c.name}</span>
+                          {slots.some((x) => x.start_time.slice(0, 5) <= nowHm && nowHm < x.end_time.slice(0, 5)) && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-black text-danger"><span className="ping-dot size-1.5 rounded-full bg-danger" /> الآن</span>
+                          )}
+                        </div>
+                        <div className="mt-1 flex flex-wrap gap-1"><CurriculumBadges grade={c.grade} subject={c.subject} size="xs" /></div>
                         <div className="text-sm text-muted">{slots.map((x) => `${Fmt.time12(x.start_time)} - ${Fmt.time12(x.end_time)}`).join(" • ")}{c.room ? ` • ${c.room}` : ""}</div>
                       </div>
                       {perms.canTakeAttendance && (
@@ -187,5 +221,69 @@ export default function Overview() {
         </>
       )}
     </Async>
+  );
+}
+
+/** How the center's active students split across Baccalaureate tracks and Thanaweya Amma branches. */
+function TracksWidget({ grades, canManage }: { grades: string[]; canManage: boolean }) {
+  if (!grades.length) return null;
+  const rows: { key: string; label: string; emoji: string; color: string; n: number; sys: string }[] = [];
+  const add = (key: string, label: string, emoji: string, color: string, sys: string) => {
+    const row = rows.find((x) => x.key === key);
+    if (row) row.n++;
+    else rows.push({ key, label, emoji, color, n: 1, sys });
+  };
+  for (const g of grades) {
+    const { stage, track } = parseStudentGrade(g);
+    if (!stage) add("other", "صفوف أخرى", "📘", "#94a3b8", "other");
+    else if (track) add(`${stage.id}:${track.id}`, `${track.name} — ${stage.short}`, track.emoji, track.color, stage.system);
+    else add(stage.id, stage.short, stage.system === "bac" ? "🎓" : "📘", SYSTEMS.find((x) => x.id === stage.system)!.color, stage.system);
+  }
+  const order = (k: string) => { const i = STAGES.findIndex((s) => k.startsWith(s.id)); return i < 0 ? 99 : i; };
+  rows.sort((a, b) => order(b.key) - order(a.key) || b.n - a.n);
+  const total = grades.length;
+  const bac = rows.filter((x) => x.sys === "bac").reduce((a, x) => a + x.n, 0);
+
+  return (
+    <div className="mt-6 overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line bg-surface-2/60 p-5">
+        <div className="flex items-center gap-3">
+          <span className="grid size-11 place-items-center rounded-2xl bg-hero text-xl text-white shadow-lg">🎓</span>
+          <div>
+            <h3 className="text-lg font-extrabold">طلابك حسب المسار</h3>
+            <p className="text-sm text-muted">البكالوريا المصرية والثانوية العامة</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="text-center"><div className="text-2xl font-black text-primary"><CountUp value={bac} /></div><div className="text-[11px] font-bold text-muted">طالب بكالوريا</div></div>
+          <div className="h-10 w-px bg-line" />
+          <div className="text-center"><div className="text-2xl font-black"><CountUp value={total} /></div><div className="text-[11px] font-bold text-muted">طالب نشط</div></div>
+          {canManage && <Link href="/admin/classes" className="hidden rounded-xl bg-brand px-4 py-2.5 text-sm font-black text-white shadow-lg sm:block">مجموعة جديدة</Link>}
+        </div>
+      </div>
+      <div className="p-5">
+        <div className="flex h-4 overflow-hidden rounded-full bg-surface-3" dir="rtl">
+          {rows.map((x) => (
+            <div key={x.key} title={x.label} className="grow-x h-full first:rounded-s-full last:rounded-e-full" style={{ width: `${(x.n / total) * 100}%`, background: x.color }} />
+          ))}
+        </div>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {rows.map((x) => (
+            <div key={x.key} className="group flex items-center gap-3 rounded-2xl border border-line p-3 transition hover:-translate-y-0.5 hover:shadow-md">
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl text-xl transition-transform group-hover:scale-110" style={{ background: `${x.color}1f` }}>{x.emoji}</span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="truncate text-sm font-extrabold">{x.label}</span>
+                  <span className="text-sm font-black" style={{ color: x.color }}><CountUp value={x.n} /></span>
+                </div>
+                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-surface-3">
+                  <div className="grow-x h-full rounded-full" style={{ width: `${(x.n / total) * 100}%`, background: x.color }} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

@@ -103,6 +103,13 @@ export const studentApi = {
     const byId = new Map(summaries.map((s) => [s.student_id, s]));
     return rows.map((r) => toSummary(r, byId.get(r.id)));
   },
+  /** Grade text of every active student (stage • track), for the distribution widget. */
+  async activeGrades(): Promise<string[]> {
+    const rows = await fetchAll<{ grade: string }>((from, to) =>
+      sb().from("students").select("grade").eq("status", "active").order("id").range(from, to) as never,
+    );
+    return rows.map((r) => r.grade ?? "");
+  },
   async listAtRisk(threshold: number, limit = 20): Promise<StudentSummary[]> {
     const rows = must(
       await sb().from("students").select("*, enrollments(class_id, classes(id, name))").eq("status", "active").order("name").limit(limit * 5),

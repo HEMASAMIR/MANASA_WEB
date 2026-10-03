@@ -400,3 +400,14 @@ html.i18n-pending body { visibility: hidden; }
 /* Lighthouse beam sweeping behind the footer logo */
 .beam { position: absolute; inset: -60%; border-radius: 9999px; pointer-events: none; background: conic-gradient(from 0deg, rgba(251, 191, 36, 0.55) 0deg, rgba(251, 191, 36, 0.15) 28deg, transparent 60deg, transparent 360deg); mask-image: radial-gradient(circle, #000 20%, transparent 70%); animation: beam 7s linear infinite; }
 @keyframes beam { to { transform: rotate(360deg); } }
+
+/* Page titles: underline grows in, portal pages glide in */
+.header-line { transform-origin: right; animation: header-line 0.9s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+[dir="ltr"] .header-line { transform-origin: left; }
+@keyframes header-line { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.page-enter { animation: page-enter 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes page-enter { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+/* Bars that grow to their width */
+.grow-x { transform-origin: right; animation: grow-x 1.3s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+[dir="ltr"] .grow-x { transform-origin: left; }
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }

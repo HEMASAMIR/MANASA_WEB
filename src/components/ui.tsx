@@ -8,6 +8,7 @@ import { AlertTriangle, CheckCircle2, Inbox, Info, Loader2, RefreshCw, WifiOff, 
 import { colorFor } from "@/lib/fmt";
 import { friendlyError } from "@/lib/errors";
 import type { Tone } from "@/lib/types";
+import { CountUp } from "./fx";
 
 export function cx(...c: (string | false | null | undefined)[]) {
   return c.filter(Boolean).join(" ");
@@ -116,15 +117,20 @@ export function IconBadge({ icon: Icon, color = TONE_HEX.primary, size = 46 }: {
 export function StatCard({ label, value, icon, tone = "primary", hint }: { label: string; value: ReactNode; icon: LucideIcon; tone?: Tone; hint?: string }) {
   const color = TONE_HEX[tone];
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-line bg-surface p-5 shadow-soft animate-in">
-      <div className="absolute -top-10 -end-10 size-32 rounded-full" style={{ background: `${color}14` }} />
-      <div className="relative flex items-center gap-4">
-        <IconBadge icon={icon} color={color} />
-        <div className="min-w-0">
-          <div className="text-2xl font-black leading-tight truncate">{value}</div>
-          <div className="text-[13px] font-semibold text-muted truncate">{label}</div>
-          {hint && <div className="text-[11px] text-muted/80 mt-0.5">{hint}</div>}
+    <div className="rounded-3xl animate-in">
+      <div data-tilt="8" className="spotlight group relative h-full overflow-hidden rounded-3xl border border-line bg-surface p-5 shadow-soft transition-[border-color,box-shadow] duration-300 hover:shadow-[0_22px_44px_-18px_rgba(15,23,42,0.22)]"
+        style={{ "--spot": `${color}22` } as React.CSSProperties}>
+        <div className="absolute -top-10 -end-10 size-32 rounded-full transition-transform duration-700 group-hover:scale-150" style={{ background: `${color}14` }} />
+        <div className="absolute -bottom-12 start-10 size-24 rounded-full opacity-0 transition-opacity duration-500 group-hover:opacity-100" style={{ background: `${color}0f` }} />
+        <div className="relative flex items-center gap-4">
+          <div className="transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-110"><IconBadge icon={icon} color={color} /></div>
+          <div className="min-w-0">
+            <div className="text-2xl font-black leading-tight truncate">{typeof value === "number" ? <CountUp value={value} /> : value}</div>
+            <div className="text-[13px] font-semibold text-muted truncate">{label}</div>
+            {hint && <div className="text-[11px] text-muted/80 mt-0.5">{hint}</div>}
+          </div>
         </div>
+        <span className="absolute inset-x-6 bottom-0 h-1 scale-x-0 rounded-t-full transition-transform duration-500 group-hover:scale-x-100" style={{ background: `linear-gradient(90deg, ${color}, #fbbf24)` }} />
       </div>
     </div>
   );
@@ -170,10 +176,11 @@ export function PageHeader({ title, subtitle, actions, icon: Icon }: { title: st
   return (
     <div className="mb-6 flex flex-wrap items-center justify-between gap-4 animate-in">
       <div className="flex items-center gap-3 min-w-0">
-        {Icon && <IconBadge icon={Icon} size={48} />}
+        {Icon && <div className="pulse-ring rounded-[16px] text-primary"><IconBadge icon={Icon} size={48} /></div>}
         <div className="min-w-0">
           <h1 className="text-2xl md:text-[28px] font-black tracking-tight truncate">{title}</h1>
-          {subtitle && <p className="text-sm text-muted mt-0.5">{subtitle}</p>}
+          <span className="header-line mt-1 block h-1 w-14 rounded-full bg-gradient-to-l from-teal-400 via-amber-400 to-sky-400" />
+          {subtitle && <p className="text-sm text-muted mt-1">{subtitle}</p>}
         </div>
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
@@ -184,7 +191,7 @@ export function PageHeader({ title, subtitle, actions, icon: Icon }: { title: st
 export function SectionTitle({ children, action }: { children: ReactNode; action?: ReactNode }) {
   return (
     <div className="mb-3 mt-7 flex items-center gap-2.5">
-      <span className="h-5 w-1 rounded-full bg-brand" />
+      <span className="relative h-5 w-1.5 rounded-full bg-gradient-to-b from-teal-400 to-amber-400"><span className="ping-dot absolute -top-0.5 start-[1px] size-1 rounded-full bg-teal-300" /></span>
       <h2 className="flex-1 text-[17px] font-extrabold">{children}</h2>
       {action}
     </div>

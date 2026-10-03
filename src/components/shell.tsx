@@ -112,22 +112,27 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
   const sidebar = (
     <div className="flex h-full flex-col">
       {/* Brand card */}
-      <div className="relative m-3 overflow-hidden rounded-[22px] bg-hero p-4 text-white shadow-[0_14px_30px_-14px_rgba(13,148,136,0.9)]">
+      <div className="glow-border relative m-3 overflow-hidden rounded-[22px] bg-hero p-4 text-white shadow-[0_14px_30px_-14px_rgba(13,148,136,0.9)]">
+        <div className="aurora opacity-40" />
         <div className="absolute -top-10 -start-10 size-32 rounded-full bg-white/10" />
         <div className="relative flex items-center gap-3">
-          <div className="grid size-11 place-items-center overflow-hidden rounded-2xl border border-white/25 bg-white/15">
+          <div className="relative grid size-11 place-items-center rounded-2xl border border-white/25 bg-white/15">
+            <span className="beam" />
             {settings?.logo_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={settings.logo_url} alt="" className="size-9 rounded-xl object-cover" />
-            ) : <LogoMark size={36} />}
+            ) : <LogoMark size={36} className="relative" />}
           </div>
           <div className="min-w-0">
             <div className="truncate text-[15px] font-black">{centerName}</div>
             <div className="text-[11.5px] text-white/75">{portalLabel}</div>
           </div>
         </div>
-        <div className="relative mt-4 flex items-center gap-2.5 rounded-2xl bg-white/12 p-2.5">
-          <div className="grid size-9 place-items-center rounded-full bg-white font-black text-primary-2">{initialOf(profile?.name ?? "")}</div>
+        <div className="relative mt-4 flex items-center gap-2.5 rounded-2xl bg-white/12 p-2.5 backdrop-blur">
+          <div className="relative grid size-9 place-items-center rounded-full bg-white font-black text-primary-2">
+            {initialOf(profile?.name ?? "")}
+            <span className="ping-dot absolute -bottom-0.5 -end-0.5 size-2.5 rounded-full border-2 border-white bg-emerald-500" />
+          </div>
           <div className="min-w-0">
             <div className="truncate text-[13px] font-bold">{profile?.name}</div>
             <div className="text-[11px] text-white/75">{profile ? ROLE_LABEL[profile.role] : ""}</div>
@@ -144,12 +149,16 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
             <Link
               key={n.href}
               href={n.href}
+              style={{ animationDelay: `${Math.min(nav.indexOf(n), 14) * 35}ms` }}
               className={cx(
-                "group flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-[14px] transition-all",
-                on ? "bg-brand font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(13,148,136,0.9)]" : "font-semibold text-ink/80 hover:bg-surface-3 hover:text-ink",
+                "group relative flex items-center gap-3 rounded-2xl px-2.5 py-2 text-[14px] transition-all duration-300 animate-in",
+                on ? "shimmer-auto bg-brand font-extrabold text-white shadow-[0_10px_22px_-10px_rgba(13,148,136,0.95)]" : "font-semibold text-ink/80 hover:bg-surface-3 hover:text-ink",
               )}
             >
-              <Icon className={cx("size-[19px] shrink-0", on ? "text-white" : "text-muted group-hover:text-primary")} />
+              {on && <span className="absolute -start-3 top-1/2 h-7 w-1.5 -translate-y-1/2 rounded-e-full bg-amber-400 shadow-[0_0_14px_rgba(251,191,36,0.9)]" />}
+              <span className={cx("grid size-8 shrink-0 place-items-center rounded-xl transition-all duration-300", on ? "bg-white/15" : "bg-surface-2 group-hover:scale-110 group-hover:bg-primary-soft")}>
+                <Icon className={cx("size-[18px]", on ? "text-white" : "text-muted group-hover:text-primary")} />
+              </span>
               <span className="flex-1 truncate">{n.label}</span>
               {badge > 0 && <span className={cx("rounded-full px-2 text-[11px] font-black", on ? "bg-white/25" : "bg-danger text-white")}>{badge > 99 ? "99+" : badge}</span>}
             </Link>
@@ -169,7 +178,8 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
   const bottom = nav.filter((n) => n.bottom).slice(0, 4);
 
   return (
-    <div className="min-h-screen portal-bg">
+    <div className="relative isolate min-h-screen portal-bg">
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden no-print"><div className="aurora opacity-[0.16]" /></div>
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 start-0 z-30 hidden w-[280px] border-e border-line bg-surface/80 backdrop-blur-xl lg:block">{sidebar}</aside>
 
@@ -208,8 +218,13 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
           <div className="brand-stripe h-1"><span /><span /><span /></div>
           <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-3 px-4 md:px-8">
             <IconButton icon={Menu} label="القائمة" className="lg:hidden" onClick={() => setOpen(true)} />
-            <div className="min-w-0 flex-1">
-              <div className="truncate text-[17px] font-black">{current?.label ?? centerName}</div>
+            <div className="flex min-w-0 flex-1 items-center gap-2.5">
+              {current && (
+                <span key={`icon:${current.href}`} className="hidden size-9 shrink-0 place-items-center rounded-xl bg-brand text-white shadow-[0_8px_16px_-8px_rgba(13,148,136,0.9)] animate-in sm:grid">
+                  <current.icon className="size-[18px]" />
+                </span>
+              )}
+              <div key={`title:${current?.href ?? "home"}`} className="truncate text-[17px] font-black animate-in">{current?.label ?? centerName}</div>
             </div>
             <LangSwitch className="grid size-10 place-items-center rounded-xl border border-line bg-surface text-sm font-black text-ink/80 transition hover:border-primary/40 hover:text-primary cursor-pointer" />
             <IconButton icon={mode === "dark" ? Sun : Moon} label={mode === "dark" ? "الوضع النهاري" : "الوضع الليلي"} onClick={toggle} />
@@ -238,7 +253,7 @@ export function PortalShell({ nav, children, portalLabel, notificationsHref }: {
           </div>
         </header>
 
-        <main data-reveal-auto className={cx("mx-auto max-w-[1400px] px-4 py-6 md:px-8 md:py-8", bottom.length ? "pb-28 lg:pb-8" : "")}>{children}</main>
+        <main key={pathname} data-reveal-auto className={cx("page-enter mx-auto max-w-[1400px] px-4 py-6 md:px-8 md:py-8", bottom.length ? "pb-28 lg:pb-8" : "")}>{children}</main>
       </div>
 
       {/* Phone bottom bar */}

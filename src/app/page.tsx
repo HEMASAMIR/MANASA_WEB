@@ -230,8 +230,8 @@ export default function Landing() {
             <BrandStripe className="absolute inset-x-0 top-0 h-1.5" />
             <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "18px 18px" }} />
             <div className="relative space-y-5">
-              <span className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-4 py-1.5 text-xs font-black shadow-lg shadow-rose-500/30">
-                <span className="ping-dot size-2 rounded-full bg-white" /> جديد 2026/2027
+              <span className="inline-flex items-center gap-2 rounded-full bg-teal-500 px-4 py-1.5 text-xs font-black shadow-lg shadow-teal-500/30">
+                <span className="ping-dot size-2 rounded-full bg-white" /> العام الدراسي 2026/2027
               </span>
               <h2 className="text-3xl font-black leading-tight sm:text-4xl lg:text-5xl">دليل <span className="text-amber-300">البكالوريا المصرية</span> والثانوية العامة</h2>
               <p className="leading-8 text-slate-300">المسارات الأربعة، المواد من أولى لتالتة ثانوي، توزيع الـ 600 درجة، مواعيد الفرص الامتحانية — وحاسبة مجموع تفاعلية.</p>

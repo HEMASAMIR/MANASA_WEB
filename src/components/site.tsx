@@ -22,7 +22,7 @@ import { cx } from "./ui";
 const NAV: { label: string; href: string; icon: typeof Home; bar?: string; text?: string; tile: string; highlighted?: boolean; badge?: string }[] = [
   { label: "الرئيسية", href: "/", icon: Home, bar: "bg-teal-500", text: "text-teal-600", tile: "bg-teal-50 text-teal-600" },
   { label: "الكورسات", href: "/courses", icon: Sparkles, highlighted: true, tile: "bg-amber-50 text-amber-600" },
-  { label: "البكالوريا", href: "/baccalaureate", icon: GraduationCap, bar: "bg-rose-500", text: "text-rose-600", tile: "bg-rose-50 text-rose-600", badge: "جديد" },
+  { label: "البكالوريا", href: "/baccalaureate", icon: GraduationCap, bar: "bg-rose-500", text: "text-rose-600", tile: "bg-rose-50 text-rose-600" },
   { label: "المميزات", href: "/#features", icon: Layers, bar: "bg-amber-500", text: "text-amber-600", tile: "bg-amber-50 text-amber-600" },
   { label: "البوابات", href: "/#portals", icon: Users, bar: "bg-emerald-500", text: "text-emerald-600", tile: "bg-emerald-50 text-emerald-600" },
   { label: "الأمان", href: "/#security", icon: ShieldCheck, bar: "bg-violet-500", text: "text-violet-600", tile: "bg-violet-50 text-violet-600" },
