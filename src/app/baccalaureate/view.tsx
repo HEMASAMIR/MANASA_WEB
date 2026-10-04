@@ -26,7 +26,7 @@ export function BaccalaureateView() {
   const cta = profile ? { href: homeFor(profile.role), label: "الذهاب للوحتي" } : { href: "/register", label: "احجز مكانك الآن" };
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-bg">
+    <div className="min-h-screen overflow-x-clip bg-bg">
       {catalog.data?.demo && <DemoBanner />}
       <SiteHeader />
       <Hero />

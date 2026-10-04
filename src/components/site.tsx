@@ -126,23 +126,10 @@ export function SiteHeader() {
   );
 }
 
-/** Floating tab bar for phones and tablets; slides away while scrolling down, comes back on scroll up. */
+/** Floating tab bar for phones and tablets, always visible. */
 function SiteBottomNav() {
   const { profile } = useAuth();
   const pathname = usePathname();
-  const [hidden, setHidden] = useState(false);
-
-  useEffect(() => {
-    let last = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      if (Math.abs(y - last) < 10) return;
-      setHidden(y > last && y > 180);
-      last = y;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const items: { href: string; label: string; icon: typeof Home; center?: boolean }[] = [
     { href: "/", label: "الرئيسية", icon: Home },
@@ -154,7 +141,7 @@ function SiteBottomNav() {
   const isOn = (h: string) => (h === "/" ? pathname === "/" : !h.includes("#") && (pathname === h || pathname.startsWith(h + "/")));
 
   return (
-    <nav aria-label="التنقل" className={cx("fixed inset-x-3 bottom-3 z-40 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:hidden no-print", hidden ? "translate-y-[150%]" : "translate-y-0")}
+    <nav aria-label="التنقل" className="fixed inset-x-3 bottom-3 z-40 lg:hidden no-print"
       style={{ marginBottom: "env(safe-area-inset-bottom)" }}>
       <div className="glass relative mx-auto flex h-[70px] max-w-md items-center rounded-[26px] border border-slate-200/80 px-1 shadow-[0_18px_40px_-14px_rgba(14,44,78,0.4)] dark:border-line">
         <BrandStripe className="absolute inset-x-10 top-0 h-[3px] overflow-hidden rounded-b-full" />

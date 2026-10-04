@@ -62,7 +62,7 @@ export default function Landing() {
   const currency = catalog.data?.center?.currency ?? "ج.م";
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-bg">
+    <div className="min-h-screen overflow-x-clip bg-bg">
       {catalog.data?.demo && <DemoBanner />}
       <SiteHeader />
 
