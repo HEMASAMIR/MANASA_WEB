@@ -24,7 +24,7 @@ function CoursesInner() {
   const [q, setQ] = useState(params.get("q") ?? "");
   const initialStage = STAGES.find((s) => s.id === params.get("stage")) ?? null;
   const sysParam = params.get("system");
-  const [system, setSystem] = useState<SystemId | "all" | "other">(initialStage?.system ?? (sysParam === "bac" || sysParam === "ta" || sysParam === "other" ? sysParam : "all"));
+  const [system, setSystem] = useState<SystemId | "all" | "other">(initialStage?.system ?? (sysParam === "other" ? "other" : SYSTEMS.find((s) => s.id === sysParam)?.id ?? "all"));
   const [stageId, setStageId] = useState<string | null>(initialStage?.id ?? null);
   const [trackId, setTrackId] = useState<string | null>(initialStage?.tracks.some((x) => x.id === params.get("track")) ? params.get("track") : null);
   const courses = useMemo(() => catalog.data?.courses ?? [], [catalog.data]);
@@ -105,7 +105,7 @@ function CoursesInner() {
             {splitCourses(shown).map(({ group, courses: list }) => (
               <div key={group.id}>
                 <CourseGroupBanner id={group.id} courses={list} onTrack={pickTrack}
-                  action={<GroupAction onClick={() => { pickSystem(group.id); document.getElementById("results")?.scrollIntoView({ behavior: "smooth" }); }}>{group.id === "bac" ? "كورسات البكالوريا فقط" : group.id === "ta" ? "كورسات الثانوية العامة فقط" : "عرض الكل"}</GroupAction>} />
+                  action={<GroupAction onClick={() => { pickSystem(group.id); document.getElementById("results")?.scrollIntoView({ behavior: "smooth" }); }}>{group.id === "other" ? "عرض الكل" : "عرض هذا القسم فقط"}</GroupAction>} />
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="120" data-reveal-child="flip">
                   {list.map((c) => <CourseCard key={c.id} c={c} currency={catalog.data?.center?.currency} />)}
                 </div>

@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { useLang } from "@/lib/i18n";
+import { useAuth } from "@/lib/auth";
 import { EN_SUBJECT_OVERRIDES } from "@/lib/i18n-en-edu";
 import {
   SYSTEMS, STAGES, findSubject, parseStage, parseStudentGrade, studentGradeText, subjectTracks,
@@ -35,16 +36,23 @@ function Label({ children }: { children: ReactNode }) {
 
 // ─── Stage ───────────────────────────────────────────────────────────────────
 
+/** Systems in the order that suits the center's country (Saudi centers see Saudi systems first). */
+function useCenterSystems() {
+  const { settings } = useAuth();
+  return settings?.country_code === "966" ? [...SYSTEMS].sort((a, b) => Number(b.id === "ksa" || b.id === "qiyas") - Number(a.id === "ksa" || a.id === "qiyas")) : SYSTEMS;
+}
+
 /** System → year chips, with a free-text fallback. Works on the stored grade text. */
 export function StagePicker({ value, onChange, label = "الصف الدراسي" }: { value: string; onChange(v: string): void; label?: string }) {
   const stage = parseStage(value);
-  const [mode, setMode] = useState<SystemId | "other">(stage?.system ?? (value.trim() ? "other" : "bac"));
+  const systems = useCenterSystems();
+  const [mode, setMode] = useState<SystemId | "other">(stage?.system ?? (value.trim() ? "other" : systems[0].id));
   const years = STAGES.filter((s) => s.system === mode);
   return (
     <div>
       <Label>{label}</Label>
       <div className="flex flex-wrap gap-2">
-        {SYSTEMS.map((s) => (
+        {systems.map((s) => (
           <Chip key={s.id} on={mode === s.id} color={s.color} onClick={() => { setMode(s.id); if (stage?.system !== s.id) onChange(""); }}>
             <span>{s.emoji}</span> {s.name}
           </Chip>
@@ -126,7 +134,7 @@ export function StudentGradePicker({ value, onChange }: { value: string; onChang
       <StagePicker value={stage ? stage.label : value} onChange={(v) => { const s = parseStage(v); onChange(s ? studentGradeText(s, null) : v); }} />
       {stage && stage.tracks.length > 0 && (
         <div>
-          <Label>{stage.system === "bac" ? "المسار" : "الشعبة"}</Label>
+          <Label>{stage.system === "ta" ? "الشعبة" : stage.system === "qiyas" ? "الاختبار" : "المسار"}</Label>
           <div className="flex flex-wrap gap-2">
             {stage.tracks.map((t) => (
               <Chip key={t.id} on={track?.id === t.id} color={t.color} onClick={() => onChange(studentGradeText(stage, t))}>

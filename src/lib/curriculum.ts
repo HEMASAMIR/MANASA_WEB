@@ -9,7 +9,7 @@
  */
 import { TRACKS } from "./education";
 
-export type SystemId = "bac" | "ta";
+export type SystemId = "bac" | "ta" | "ksa" | "qiyas";
 
 export interface TrackRef { id: string; name: string; emoji: string; color: string }
 
@@ -36,6 +36,8 @@ export interface Stage {
 export const SYSTEMS: { id: SystemId; name: string; emoji: string; color: string }[] = [
   { id: "bac", name: "البكالوريا المصرية", emoji: "🎓", color: "#0d9488" },
   { id: "ta", name: "الثانوية العامة", emoji: "📘", color: "#0ea5e9" },
+  { id: "ksa", name: "المنهج السعودي", emoji: "🌴", color: "#16a34a" },
+  { id: "qiyas", name: "القدرات والتحصيلي", emoji: "🎯", color: "#7c3aed" },
 ];
 
 const BAC_TRACKS: TrackRef[] = TRACKS.map(({ id, name, emoji, color }) => ({ id, name, emoji, color }));
@@ -47,6 +49,20 @@ const TA_SECTIONS3: TrackRef[] = [
 const TA_SECTIONS2: TrackRef[] = [
   { id: "sci", name: "علمي", emoji: "🔬", color: "#10b981" },
   { id: "lit", name: "أدبي", emoji: "📜", color: "#8b5cf6" },
+];
+
+/** Saudi secondary tracks (Ministry of Education, نظام المسارات). */
+export const KSA_TRACKS: TrackRef[] = [
+  { id: "general", name: "المسار العام", emoji: "📗", color: "#0d9488" },
+  { id: "health", name: "مسار الصحة والحياة", emoji: "🩺", color: "#10b981" },
+  { id: "cs", name: "مسار علوم الحاسب والهندسة", emoji: "💻", color: "#0ea5e9" },
+  { id: "business", name: "مسار إدارة الأعمال", emoji: "📊", color: "#f59e0b" },
+  { id: "sharia", name: "المسار الشرعي", emoji: "📜", color: "#8b5cf6" },
+];
+const QIYAS_TRACKS: TrackRef[] = [
+  { id: "qudurat", name: "القدرات العامة", emoji: "🧠", color: "#7c3aed" },
+  { id: "tahsili-sci", name: "التحصيلي العلمي", emoji: "🔬", color: "#0ea5e9" },
+  { id: "tahsili-lit", name: "التحصيلي النظري", emoji: "📚", color: "#f59e0b" },
 ];
 
 const S = (name: string, emoji: string, color: string, tracks: SubjectDef["tracks"] = "all", kind?: "choice"): SubjectDef => ({ name, emoji, color, tracks, kind });
@@ -101,6 +117,61 @@ export const STAGES: Stage[] = [
       S("التاريخ", "🏛️", "#b45309", ["lit"]),
       S("الجغرافيا", "🌍", "#16a34a", ["lit"]),
       S("الإحصاء", "📊", "#6366f1", ["lit"]),
+    ],
+  },
+  {
+    id: "ksa1", system: "ksa", year: 1, label: "السنة الأولى المشتركة — ثانوي سعودي", short: "1 ث سعودي", tracks: [],
+    subjects: [
+      S("الدراسات الإسلامية", "🕌", "#16a34a"),
+      S("اللغة العربية", "📖", "#8b5cf6"),
+      S("اللغة الإنجليزية", "🗣️", "#e11d48"),
+      S("الرياضيات", "📐", "#f59e0b"),
+      S("العلوم الطبيعية", "🔬", "#10b981"),
+      S("العلوم الاجتماعية", "🌍", "#b45309"),
+      S("التقنية الرقمية", "💻", "#0ea5e9"),
+      S("التفكير الناقد", "💭", "#6366f1"),
+    ],
+  },
+  ...([2, 3] as const).map((year): Stage => ({
+    id: `ksa${year}`, system: "ksa", year, label: `${year === 2 ? "الصف الثاني" : "الصف الثالث"} الثانوي — مسارات سعودية`, short: `${year} ث سعودي`, tracks: KSA_TRACKS,
+    subjects: [
+      S("الدراسات الإسلامية", "🕌", "#16a34a"),
+      S("اللغة العربية", "📖", "#8b5cf6"),
+      S("اللغة الإنجليزية", "🗣️", "#e11d48"),
+      S("الرياضيات", "📐", "#f59e0b", ["general", "health", "cs", "business"]),
+      S("الفيزياء", "⚛️", "#0d9488", ["general", "cs"]),
+      S("الكيمياء", "🧪", "#0ea5e9", ["general", "health"]),
+      S("الأحياء", "🧬", "#10b981", ["general", "health"]),
+      S("علوم الأرض والفضاء", "🔭", "#6366f1", ["general"]),
+      S("التقنية الرقمية", "💻", "#0284c7", ["general", "business"]),
+      S("أنظمة جسم الإنسان", "💓", "#e11d48", ["health"]),
+      S("مقدمة في العلوم الصحية", "🩺", "#14b8a6", ["health"]),
+      S("علم البيانات", "📈", "#0ea5e9", ["cs"]),
+      S("الذكاء الاصطناعي", "🤖", "#6366f1", ["cs"]),
+      S("الأمن السيبراني", "🛡️", "#0f766e", ["cs"]),
+      S("الهندسة", "⚙️", "#64748b", ["cs"]),
+      S("المحاسبة", "🧮", "#ca8a04", ["business"]),
+      S("الاقتصاد", "💹", "#f59e0b", ["business"]),
+      S("التسويق", "📣", "#db2777", ["business"]),
+      S("ريادة الأعمال", "🚀", "#ea580c", ["business"]),
+      S("علوم القرآن", "📗", "#16a34a", ["sharia"]),
+      S("أصول الفقه", "⚖️", "#8b5cf6", ["sharia"]),
+      S("مصطلح الحديث", "📜", "#b45309", ["sharia"]),
+      S("القانون", "🏛️", "#475569", ["business", "sharia"]),
+    ],
+  })),
+  {
+    id: "qiyas", system: "qiyas", year: 3, label: "القدرات والتحصيلي", short: "قدرات وتحصيلي", tracks: QIYAS_TRACKS,
+    subjects: [
+      S("القدرات — الكمي", "🔢", "#7c3aed", ["qudurat"]),
+      S("القدرات — اللفظي", "🔤", "#a855f7", ["qudurat"]),
+      S("التحصيلي — الرياضيات", "📐", "#f59e0b", ["tahsili-sci"]),
+      S("التحصيلي — الفيزياء", "⚛️", "#0d9488", ["tahsili-sci"]),
+      S("التحصيلي — الكيمياء", "🧪", "#0ea5e9", ["tahsili-sci"]),
+      S("التحصيلي — الأحياء", "🧬", "#10b981", ["tahsili-sci"]),
+      S("التحصيلي — الدراسات الإسلامية", "🕌", "#16a34a", ["tahsili-lit"]),
+      S("التحصيلي — اللغة العربية", "📖", "#8b5cf6", ["tahsili-lit"]),
+      S("التحصيلي — الدراسات الاجتماعية", "🌍", "#b45309", ["tahsili-lit"]),
     ],
   },
 ];

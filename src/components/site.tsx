@@ -177,6 +177,7 @@ function SiteBottomNav() {
 const FOOTER_LINKS = [
   { href: "/courses", label: "الكورسات" },
   { href: "/baccalaureate", label: "دليل البكالوريا والثانوية العامة" },
+  { href: "/sa", label: "لمراكز السعودية والخليج 🌴" },
   { href: "/#features", label: "المميزات" },
   { href: "/#how", label: "إزاي بتشتغل؟" },
   { href: "/login", label: "تسجيل الدخول" },

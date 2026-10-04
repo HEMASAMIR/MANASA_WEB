@@ -7,11 +7,13 @@ import { TRACKS } from "@/lib/education";
 import { parseStage } from "@/lib/curriculum";
 import type { CatalogCourse } from "@/lib/catalog";
 
-export type GroupId = "bac" | "ta" | "other";
+export type GroupId = "bac" | "ta" | "ksa" | "qiyas" | "other";
 
 export const COURSE_GROUPS: { id: GroupId; title: string; sub: string; emoji: string; from: string; to: string; accent: string }[] = [
   { id: "bac", title: "كورسات البكالوريا المصرية", sub: "مواد الصف الأول والثاني والثالث الثانوي بالمسارات الأربعة", emoji: "🎓", from: "#0f766e", to: "#0e2c4e", accent: "#fbbf24" },
   { id: "ta", title: "كورسات الثانوية العامة", sub: "مواد الصف الثاني والثالث الثانوي — علمي علوم وعلمي رياضة وأدبي", emoji: "📘", from: "#0369a1", to: "#0e2c4e", accent: "#38bdf8" },
+  { id: "ksa", title: "كورسات المنهج السعودي", sub: "السنة الأولى المشتركة ومسارات الصف الثاني والثالث الثانوي", emoji: "🌴", from: "#15803d", to: "#0e2c4e", accent: "#86efac" },
+  { id: "qiyas", title: "كورسات القدرات والتحصيلي", sub: "تأسيس وتدريب على اختبارات قياس: الكمي واللفظي والتحصيلي العلمي والنظري", emoji: "🎯", from: "#6d28d9", to: "#0e2c4e", accent: "#c4b5fd" },
   { id: "other", title: "كورسات أخرى", sub: "مواد وصفوف تانية بيدرّسها المركز", emoji: "📚", from: "#475569", to: "#1e293b", accent: "#cbd5e1" },
 ];
 

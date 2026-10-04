@@ -237,12 +237,13 @@ function TracksWidget({ grades, canManage }: { grades: string[]; canManage: bool
     const { stage, track } = parseStudentGrade(g);
     if (!stage) add("other", "صفوف أخرى", "📘", "#94a3b8", "other");
     else if (track) add(`${stage.id}:${track.id}`, `${track.name} — ${stage.short}`, track.emoji, track.color, stage.system);
-    else add(stage.id, stage.short, stage.system === "bac" ? "🎓" : "📘", SYSTEMS.find((x) => x.id === stage.system)!.color, stage.system);
+    else { const sys = SYSTEMS.find((x) => x.id === stage.system)!; add(stage.id, stage.short, sys.emoji, sys.color, stage.system); }
   }
   const order = (k: string) => { const i = STAGES.findIndex((s) => k.startsWith(s.id)); return i < 0 ? 99 : i; };
   rows.sort((a, b) => order(b.key) - order(a.key) || b.n - a.n);
   const total = grades.length;
-  const bac = rows.filter((x) => x.sys === "bac").reduce((a, x) => a + x.n, 0);
+  const bySystem = SYSTEMS.map((s) => ({ s, n: rows.filter((x) => x.sys === s.id).reduce((a, x) => a + x.n, 0) })).filter((x) => x.n);
+  const main = [...bySystem].sort((a, b) => b.n - a.n)[0];
 
   return (
     <div className="mt-6 overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
@@ -251,12 +252,16 @@ function TracksWidget({ grades, canManage }: { grades: string[]; canManage: bool
           <span className="grid size-11 place-items-center rounded-2xl bg-hero text-xl text-white shadow-lg">🎓</span>
           <div>
             <h3 className="text-lg font-extrabold">طلابك حسب المسار</h3>
-            <p className="text-sm text-muted">البكالوريا المصرية والثانوية العامة</p>
+            <p className="text-sm text-muted">{bySystem.map((x) => x.s.name).join(" • ") || "صفوف المركز"}</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-center"><div className="text-2xl font-black text-primary"><CountUp value={bac} /></div><div className="text-[11px] font-bold text-muted">طالب بكالوريا</div></div>
-          <div className="h-10 w-px bg-line" />
+          {main && (
+            <>
+              <div className="text-center"><div className="text-2xl font-black text-primary"><CountUp value={main.n} /></div><div className="text-[11px] font-bold text-muted">{main.s.emoji} {main.s.name}</div></div>
+              <div className="h-10 w-px bg-line" />
+            </>
+          )}
           <div className="text-center"><div className="text-2xl font-black"><CountUp value={total} /></div><div className="text-[11px] font-bold text-muted">طالب نشط</div></div>
           {canManage && <Link href="/admin/classes" className="hidden rounded-xl bg-brand px-4 py-2.5 text-sm font-black text-white shadow-lg sm:block">مجموعة جديدة</Link>}
         </div>

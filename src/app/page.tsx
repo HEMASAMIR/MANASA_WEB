@@ -278,7 +278,7 @@ export default function Landing() {
                   <div key={group.id}>
                     <CourseGroupBanner id={group.id} courses={list}
                       onTrack={(track) => router.push(`/courses?stage=bac2&track=${track}`)}
-                      action={<GroupAction href={`/courses?system=${group.id}`}>{group.id === "bac" ? "كل كورسات البكالوريا" : group.id === "ta" ? "كل كورسات الثانوية العامة" : "عرض الكل"}</GroupAction>} />
+                      action={<GroupAction href={`/courses?system=${group.id}`}>{group.id === "bac" ? "كل كورسات البكالوريا" : group.id === "ta" ? "كل كورسات الثانوية العامة" : group.id === "other" ? "عرض الكل" : "عرض هذا القسم"}</GroupAction>} />
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="140" data-reveal-child="flip">
                       {list.slice(0, 3).map((c) => <CourseCard key={c.id} c={c} currency={currency} />)}
                     </div>
