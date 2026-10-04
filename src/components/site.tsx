@@ -296,8 +296,8 @@ export function SiteFooter({ phone }: { phone?: string | null }) {
       </div>
 
       {/* Giant outlined name */}
-      <div aria-hidden className="pointer-events-none relative -mb-[3%] select-none overflow-hidden text-center text-[clamp(6rem,19vw,17rem)] leading-[0.85] font-black text-transparent [-webkit-text-stroke:1.5px_rgba(255,255,255,0.07)]">
-        {APP_NAME}
+      <div aria-hidden className="pointer-events-none relative select-none px-4 pt-2 pb-10 text-center">
+        <span className="footer-name inline-block text-[clamp(5rem,17vw,15rem)] leading-[1.25] font-black">{APP_NAME}</span>
       </div>
 
       <div className="relative border-t border-white/10 bg-navy/60 backdrop-blur">

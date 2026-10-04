@@ -423,3 +423,13 @@ html.i18n-pending body { visibility: hidden; }
 .pref-bar { transform-origin: left; animation: pref-bar linear both; }
 [dir="rtl"] .pref-bar { transform-origin: right; }
 @keyframes pref-bar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+/* Big brand name at the bottom of the footer: soft flowing gradient fill */
+.footer-name {
+  background: linear-gradient(110deg, rgba(45, 212, 191, 0.4) 0%, rgba(255, 255, 255, 0.22) 40%, rgba(251, 191, 36, 0.38) 70%, rgba(45, 212, 191, 0.4) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: text-flow 12s linear infinite;
+}
