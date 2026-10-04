@@ -329,6 +329,9 @@ export const EN_PLATFORM: Record<string, string> = {
   "صُممت للسناتر والمدارس في مصر والخليج": "Built for learning centers and schools in Egypt and the Gulf",
   "لأعلى الصفحة": "Back to top",
 
+  // Bottom tab bar
+  "التنقل": "Navigation",
+
   // 404
   "الصفحة دي": "This page",
   "مش موجودة": "doesn't exist",

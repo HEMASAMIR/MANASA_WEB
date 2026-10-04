@@ -48,6 +48,7 @@ export function SiteHeader() {
   }, []);
 
   return (
+    <>
     <header className={cx("sticky top-0 z-40 border-b border-slate-200/70 transition-all duration-300 dark:border-line", scrolled ? "glass shadow-lg shadow-slate-900/[0.06]" : "bg-surface")}>
       <BrandStripe />
       <div className={cx("mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 transition-all duration-300 sm:px-6 lg:px-8", scrolled ? "h-16" : "h-20")}>
@@ -120,6 +121,69 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
+    <SiteBottomNav />
+    </>
+  );
+}
+
+/** Floating tab bar for phones and tablets; slides away while scrolling down, comes back on scroll up. */
+function SiteBottomNav() {
+  const { profile } = useAuth();
+  const pathname = usePathname();
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (Math.abs(y - last) < 10) return;
+      setHidden(y > last && y > 180);
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const items: { href: string; label: string; icon: typeof Home; center?: boolean }[] = [
+    { href: "/", label: "الرئيسية", icon: Home },
+    { href: "/courses", label: "الكورسات", icon: PlayCircle },
+    { href: "/baccalaureate", label: "البكالوريا", icon: GraduationCap, center: true },
+    { href: "/#contact", label: "تواصل", icon: MessageCircle },
+    profile ? { href: homeFor(profile.role), label: "لوحتي", icon: LayoutDashboard } : { href: "/login", label: "دخول", icon: User },
+  ];
+  const isOn = (h: string) => (h === "/" ? pathname === "/" : !h.includes("#") && (pathname === h || pathname.startsWith(h + "/")));
+
+  return (
+    <nav aria-label="التنقل" className={cx("fixed inset-x-3 bottom-3 z-40 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:hidden no-print", hidden ? "translate-y-[150%]" : "translate-y-0")}
+      style={{ marginBottom: "env(safe-area-inset-bottom)" }}>
+      <div className="glass relative mx-auto flex h-[70px] max-w-md items-center rounded-[26px] border border-slate-200/80 px-1 shadow-[0_18px_40px_-14px_rgba(14,44,78,0.4)] dark:border-line">
+        <BrandStripe className="absolute inset-x-10 top-0 h-[3px] overflow-hidden rounded-b-full" />
+        {items.map((it) => {
+          const on = isOn(it.href);
+          if (it.center) {
+            return (
+              <Link key={it.href} href={it.href} className="relative -mt-9 flex flex-1 flex-col items-center gap-1">
+                <span className="pulse-ring rounded-full text-amber-400">
+                  <span className={cx("bg-gold relative grid size-[60px] place-items-center rounded-full text-navy ring-4 ring-[var(--surface)] transition-transform duration-300 active:scale-90", on ? "glow-gold scale-105" : "shadow-[0_12px_26px_-8px_rgba(245,158,11,0.8)]")}>
+                    <it.icon className="size-7" />
+                  </span>
+                </span>
+                <span className={cx("text-[10.5px] leading-none font-black", on ? "text-amber-600 dark:text-amber-300" : "text-amber-700/90 dark:text-amber-300/90")}>{it.label}</span>
+              </Link>
+            );
+          }
+          return (
+            <Link key={it.href} href={it.href} className="group relative flex flex-1 flex-col items-center gap-1">
+              <span className={cx("grid h-9 place-items-center rounded-2xl transition-all duration-300 group-active:scale-90", on ? "w-12 bg-brand text-white shadow-[0_8px_16px_-6px_rgba(13,148,136,0.9)]" : "w-10 text-slate-500 dark:text-muted")}>
+                <it.icon className="size-5" />
+              </span>
+              <span className={cx("max-w-[64px] truncate text-[10.5px] leading-none", on ? "font-black text-primary" : "font-bold text-slate-500 dark:text-muted")}>{it.label}</span>
+              {on && <span className="absolute -bottom-2 size-1 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.9)]" />}
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
   );
 }
 
@@ -258,6 +322,7 @@ export function SiteFooter({ phone }: { phone?: string | null }) {
           </button>
         </div>
       </div>
+      <div aria-hidden className="h-24 lg:hidden" />
     </footer>
   );
 }

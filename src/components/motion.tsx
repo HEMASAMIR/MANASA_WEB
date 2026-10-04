@@ -91,7 +91,6 @@ export function Motion() {
       });
     };
 
-    scan(document);
     // New content (data loads, route changes): rescan once per frame.
     let pending = 0;
     const mo = new MutationObserver((muts) => {
@@ -101,7 +100,21 @@ export function Motion() {
         scan(document);
       });
     });
-    mo.observe(document.body, { childList: true, subtree: true });
+    // Tag elements only once React has hydrated the server HTML (streamed sections hydrate after the
+    // first effect); touching their attributes earlier causes hydration mismatches.
+    let started = false;
+    let idle = 0;
+    const start = () => {
+      if (started) return;
+      started = true;
+      scan(document);
+      mo.observe(document.body, { childList: true, subtree: true });
+    };
+    const schedule = () => {
+      idle = typeof window.requestIdleCallback === "function" ? window.requestIdleCallback(start, { timeout: 600 }) : window.setTimeout(start, 120);
+    };
+    if (document.readyState === "complete") schedule();
+    else window.addEventListener("load", schedule, { once: true });
 
     // Parallax
     let raf = 0;
@@ -148,6 +161,9 @@ export function Motion() {
     }
 
     return () => {
+      window.removeEventListener("load", schedule);
+      if (typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(idle);
+      window.clearTimeout(idle);
       document.removeEventListener("pointermove", onPointer);
       document.documentElement.removeEventListener("pointerleave", onLeave);
       onLeave();
