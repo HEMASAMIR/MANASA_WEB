@@ -329,7 +329,13 @@ export const EN_PLATFORM: Record<string, string> = {
   "صُممت للسناتر والمدارس في مصر والخليج": "Built for learning centers and schools in Egypt and the Gulf",
   "لأعلى الصفحة": "Back to top",
 
+  // 404
+  "الصفحة دي": "This page",
+  "مش موجودة": "doesn't exist",
+  "يمكن الرابط اتغير أو اتكتب غلط. المنارة هتنوّر لك الطريق 👇": "The link may have changed or been mistyped. Let the lighthouse show you the way 👇",
+
   // Login / register
+  "منذ دقيقة": "1 min ago",
   "منصة واحدة لـ": "One platform for",
   "الحضور": "attendance",
   "المتابعة": "follow-up",

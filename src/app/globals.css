@@ -68,7 +68,8 @@ body {
   font-family: var(--font-cairo), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-::selection { background: #fbbf24; color: #0f172a; }
+::selection { background: rgba(20, 184, 166, 0.22); color: inherit; }
+.dark ::selection { background: rgba(45, 212, 191, 0.3); }
 
 /* Navy panel with teal + gold light (hero cards, brand blocks) */
 .bg-hero {

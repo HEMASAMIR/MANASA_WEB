@@ -15,7 +15,7 @@ const ORBIT = ["⚛️", "📖", "🧪", "📐", "🧬", "💻"];
 const TOASTS = [
   { e: "✅", t: "تم تسجيل حضور أحمد", s: "منذ دقيقة", pos: "top-[9%] start-[6%]", cls: "float-slow" },
   { e: "🏆", t: "درجة الكويز 19 / 20", s: "الفيزياء — 2 بكالوريا", pos: "top-[6%] end-[4%]", cls: "float-mid" },
-  { e: "🎯", t: "خطة مذاكرتك جاهزة", s: "مسار الطب وعلوم الحياة", pos: "bottom-[12%] end-[4%]", cls: "float-fast" },
+  { e: "🎯", t: "خطة مذاكرتك جاهزة", s: "مسار الطب وعلوم الحياة", pos: "bottom-[12%] end-[4%]", cls: "float-fast", tall: true },
 ];
 
 export function AuthLayout({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
@@ -30,7 +30,7 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
 
         {/* Live-looking notifications */}
         {TOASTS.map((x) => (
-          <div key={x.t} className={`absolute z-10 hidden items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-md xl:flex ${x.pos} ${x.cls}`}>
+          <div key={x.t} className={`absolute z-10 hidden items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-md ${"tall" in x ? "xl:[@media(min-height:880px)]:flex" : "xl:flex"} ${x.pos} ${x.cls}`}>
             <span className="grid size-10 place-items-center rounded-xl bg-white/15 text-xl">{x.e}</span>
             <span><span className="block text-sm font-black">{x.t}</span><span className="block text-[11px] font-bold text-white/65">{x.s}</span></span>
           </div>
