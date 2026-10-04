@@ -329,6 +329,19 @@ export const EN_PLATFORM: Record<string, string> = {
   "صُممت للسناتر والمدارس في مصر والخليج": "Built for learning centers and schools in Egypt and the Gulf",
   "لأعلى الصفحة": "Back to top",
 
+  // Course groups
+  "كورس": "courses",
+  "كورسات البكالوريا المصرية": "Egyptian Baccalaureate courses",
+  "مواد الصف الأول والثاني والثالث الثانوي بالمسارات الأربعة": "Grade 10, 11 and 12 subjects across the four tracks",
+  "كورسات الثانوية العامة": "Thanaweya Amma courses",
+  "مواد الصف الثاني والثالث الثانوي — علمي علوم وعلمي رياضة وأدبي": "Grade 11 and 12 subjects — Science, Mathematics and Literary",
+  "مواد وصفوف تانية بيدرّسها المركز": "Other subjects and grades taught at the center",
+  "كورسات البكالوريا فقط": "Baccalaureate courses only",
+  "كورسات الثانوية العامة فقط": "Thanaweya Amma courses only",
+  "كل كورسات البكالوريا": "All Baccalaureate courses",
+  "كل كورسات الثانوية العامة": "All Thanaweya Amma courses",
+  "عرض الكل": "View all",
+
   // Bottom tab bar
   "التنقل": "Navigation",
 

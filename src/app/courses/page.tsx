@@ -8,6 +8,7 @@ import { loadCatalog } from "@/lib/catalog";
 import { BrandStripe, CourseCard, DemoBanner, SiteFooter, SiteHeader } from "@/components/site";
 import { EmptyState, Skeleton, cx } from "@/components/ui";
 import { SYSTEMS, STAGES, parseStage, subjectTracks, type SystemId } from "@/lib/curriculum";
+import { CourseGroupBanner, GroupAction, splitCourses } from "@/components/course-groups";
 
 export default function CoursesPage() {
   return (
@@ -22,7 +23,8 @@ function CoursesInner() {
   const catalog = useAsync(() => loadCatalog(), []);
   const [q, setQ] = useState(params.get("q") ?? "");
   const initialStage = STAGES.find((s) => s.id === params.get("stage")) ?? null;
-  const [system, setSystem] = useState<SystemId | "all" | "other">(initialStage?.system ?? "all");
+  const sysParam = params.get("system");
+  const [system, setSystem] = useState<SystemId | "all" | "other">(initialStage?.system ?? (sysParam === "bac" || sysParam === "ta" || sysParam === "other" ? sysParam : "all"));
   const [stageId, setStageId] = useState<string | null>(initialStage?.id ?? null);
   const [trackId, setTrackId] = useState<string | null>(initialStage?.tracks.some((x) => x.id === params.get("track")) ? params.get("track") : null);
   const courses = useMemo(() => catalog.data?.courses ?? [], [catalog.data]);
@@ -32,6 +34,12 @@ function CoursesInner() {
   const stagesHere = STAGES.filter((s) => s.system === system && courses.some((c) => stageOf(c.grade)?.id === s.id));
   const stage = STAGES.find((s) => s.id === stageId) ?? null;
   const pickSystem = (s: typeof system) => { setSystem(s); setStageId(null); setTrackId(null); };
+  /** Jump to a Baccalaureate track (grade 11, where every track has its own subject). */
+  const pickTrack = (id: string) => {
+    setSystem("bac"); setStageId("bac2"); setTrackId(id);
+    document.getElementById("results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  const grouped = system === "all" && !stageId && !trackId && !q.trim();
   const shown = courses.filter((c) => {
     const t = q.trim();
     const cs = stageOf(c.grade);
@@ -86,15 +94,34 @@ function CoursesInner() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <section id="results" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-14 sm:px-6 lg:px-8">
         {catalog.loading && !catalog.data ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{[0, 1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="h-[440px] rounded-[2rem]" />)}</div>
         ) : shown.length === 0 ? (
           <EmptyState icon={Sparkles} message={courses.length ? "لا توجد نتائج مطابقة للبحث" : "لا توجد كورسات منشورة حالياً"} />
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="120" data-reveal-child="flip">
-            {shown.map((c) => <CourseCard key={c.id} c={c} currency={catalog.data?.center?.currency} />)}
+        ) : grouped ? (
+          // Everything: one section per system, Baccalaureate first
+          <div className="space-y-16">
+            {splitCourses(shown).map(({ group, courses: list }) => (
+              <div key={group.id}>
+                <CourseGroupBanner id={group.id} courses={list} onTrack={pickTrack}
+                  action={<GroupAction onClick={() => { pickSystem(group.id); document.getElementById("results")?.scrollIntoView({ behavior: "smooth" }); }}>{group.id === "bac" ? "كورسات البكالوريا فقط" : group.id === "ta" ? "كورسات الثانوية العامة فقط" : "عرض الكل"}</GroupAction>} />
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="120" data-reveal-child="flip">
+                  {list.map((c) => <CourseCard key={c.id} c={c} currency={catalog.data?.center?.currency} />)}
+                </div>
+              </div>
+            ))}
           </div>
+        ) : (
+          <>
+            {system !== "all" && (
+              <CourseGroupBanner id={system} courses={shown} onTrack={system === "bac" && !trackId ? pickTrack : undefined}
+                action={<GroupAction onClick={() => pickSystem("all")}>كل الكورسات</GroupAction>} />
+            )}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="120" data-reveal-child="flip">
+              {shown.map((c) => <CourseCard key={c.id} c={c} currency={catalog.data?.center?.currency} />)}
+            </div>
+          </>
         )}
       </section>
       <SiteFooter phone={catalog.data?.center?.contact_phone} />

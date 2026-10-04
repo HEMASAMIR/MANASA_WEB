@@ -11,9 +11,10 @@ import { useAuth } from "@/lib/auth";
 import { useAsync } from "@/lib/hooks";
 import { loadCatalog } from "@/lib/catalog";
 import { TRACKS } from "@/lib/education";
-import { STAGES, parseStage } from "@/lib/curriculum";
+import { STAGES } from "@/lib/curriculum";
 import { Marquee, RotatingWord } from "@/components/fx";
 import { SubjectName } from "@/components/curriculum";
+import { CourseGroupBanner, GroupAction, splitCourses } from "@/components/course-groups";
 import { APP_NAME } from "@/lib/supabase";
 import { homeFor } from "@/lib/types";
 import { BrandStripe, CourseCard, DemoBanner, SiteFooter, SiteHeader } from "@/components/site";
@@ -57,8 +58,6 @@ export default function Landing() {
   const cta = profile ? { href: homeFor(profile.role), label: "الذهاب للوحتي" } : { href: "/register", label: "ابدأ الآن مجاناً" };
   const courses = catalog.data?.courses ?? [];
   const totalLessons = courses.reduce((a, c) => a + c.lessons.length, 0);
-  // Baccalaureate courses first: they are what most visitors come for.
-  const featured = [...courses].sort((a, b) => Number(parseStage(b.grade)?.system === "bac") - Number(parseStage(a.grade)?.system === "bac")).slice(0, 6);
   const currency = catalog.data?.center?.currency ?? "ج.م";
 
   return (
@@ -274,8 +273,17 @@ export default function Landing() {
             <p className="text-center text-slate-500">لا توجد كورسات منشورة حالياً.</p>
           ) : (
             <>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="140" data-reveal-child="flip">
-                {featured.map((c) => <CourseCard key={c.id} c={c} currency={currency} />)}
+              <div className="space-y-16">
+                {splitCourses(courses).map(({ group, courses: list }) => (
+                  <div key={group.id}>
+                    <CourseGroupBanner id={group.id} courses={list}
+                      onTrack={(track) => router.push(`/courses?stage=bac2&track=${track}`)}
+                      action={<GroupAction href={`/courses?system=${group.id}`}>{group.id === "bac" ? "كل كورسات البكالوريا" : group.id === "ta" ? "كل كورسات الثانوية العامة" : "عرض الكل"}</GroupAction>} />
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="140" data-reveal-child="flip">
+                      {list.slice(0, 3).map((c) => <CourseCard key={c.id} c={c} currency={currency} />)}
+                    </div>
+                  </div>
+                ))}
               </div>
               <div className="mt-12 text-center" data-reveal="zoom">
                 <Link href="/courses" className="shimmer-auto inline-flex items-center gap-2 rounded-full bg-navy px-8 py-4 font-black text-white shadow-xl shadow-navy/25 transition hover:-translate-y-0.5">

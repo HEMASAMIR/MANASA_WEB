@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { EN } from "./i18n-en";
 import { EN_EDU, EN_PLATFORM } from "./i18n-en-edu";
+import { announcePreference } from "./notice";
 
 export type Lang = "ar" | "en";
 
@@ -172,6 +173,7 @@ export function LangProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("lang", l);
     } catch {}
     apply(l);
+    announcePreference({ kind: "lang", value: l });
   };
 
   return (

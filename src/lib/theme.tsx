@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { announcePreference } from "./notice";
 
 type Mode = "light" | "dark";
 const Ctx = createContext<{ mode: Mode; toggle(): void; set(m: Mode): void }>({ mode: "light", toggle() {}, set() {} });
@@ -19,6 +20,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try {
       localStorage.setItem("theme", m);
     } catch {}
+    announcePreference({ kind: "theme", value: m });
   };
 
   return <Ctx.Provider value={{ mode, set, toggle: () => set(mode === "dark" ? "light" : "dark") }}>{children}</Ctx.Provider>;

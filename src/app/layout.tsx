@@ -7,6 +7,7 @@ import { langInitScript, themeInitScript } from "@/lib/init-scripts";
 import { UiProvider } from "@/components/ui";
 import { LangProvider } from "@/lib/i18n";
 import { Motion } from "@/components/motion";
+import { PreferenceToast } from "@/components/pref-toast";
 import { SITE_URL } from "@/lib/site";
 
 const cairo = Cairo({ variable: "--font-cairo", subsets: ["arabic", "latin"], weight: ["400", "500", "600", "700", "800", "900"] });
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <UiProvider>
                 {children}
                 <Motion />
+                <PreferenceToast />
               </UiProvider>
             </AuthProvider>
           </LangProvider>
